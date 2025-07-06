@@ -43,6 +43,9 @@
   - [Serverless 部署](deployment/serverless.md)
   - [容器部署](deployment/container.md)
 
+- **数据库**
+  - [开发流程](database/README.md)
+
 - **开发指南**
   - [开发流程](development/README.md)
   - [代码规范](development/code-standards.md)
