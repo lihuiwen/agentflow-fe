@@ -62,6 +62,17 @@ const common = {
   ],
   resolve: {
     modules: ["node_modules", resolve("src"), resolve("app")],
+    alias: {
+      '@': resolve('src/'),
+      '@components': resolve('src/components'),
+      '@hooks': resolve('src/hooks'),
+      '@pages': resolve('src/pages'),
+      '@assets': resolve('src/assets'),
+      '@utils': resolve('src/utils'),
+      '@store': resolve('src/store'),
+      '@apis': resolve('src/apis'),
+      '@types': resolve('src/types'),
+    },
     extensions: [".js", ".ts", ".tsx", ".jsx"],
     plugins: [
       new TsconfigPathsPlugin({

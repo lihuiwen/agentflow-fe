@@ -6,11 +6,18 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import createEmotionCache from './createEmotionCache';
+import { CacheProvider } from '@emotion/react';
 import App from "index";
 
 interface TradeFlagType {
   isSSR: boolean;
 }
+
+
+// 和服务端共享 emotion cache
+const emotionCache = createEmotionCache();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,7 +39,12 @@ const ClientApp = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <Hydrate state={JSON.parse(dehydratedState)}>
-        <App />
+        <CacheProvider value={emotionCache}>
+          {/* <ThemeProvider> */}
+            <CssBaseline />
+            <App />
+          {/* </ThemeProvider> */}
+        </CacheProvider>
       </Hydrate>
     </QueryClientProvider>
   </BrowserRouter>
