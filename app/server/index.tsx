@@ -14,6 +14,7 @@ import {
   renderToReadableStream,
   renderToPipeableStream,
 } from "react-dom/server";
+import createEmotionCache from "@app/utils/emotionCache";
 
 const app = new Koa();
 export const router = new Router();
@@ -26,12 +27,31 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     entrypoints: ["client"],
   });
   const SCSheet = new ServerStyleSheet();
+
+  // 创建emotion cache和server实例
+  const emotionCache = createEmotionCache();
+  const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionServer(emotionCache);
+
   const jsx = SCSheet.collectStyles(
-    extractor.collectChunks(await renderApp(ctx))
+    extractor.collectChunks(await renderApp(ctx, emotionCache))
   );
   let appContent = "";
+  let emotionStyleTags = "";
+  let emotionCacheDataString = "";
   try {
     appContent = await renderToStream(jsx); // 渲染出应用的html字符串
+
+    // 提取emotion样式
+    const emotionChunks = extractCriticalToChunks(appContent);
+    emotionStyleTags = constructStyleTagsFromChunks(emotionChunks);
+    
+    // 序列化emotion缓存状态 - 只保存已插入的样式ID
+    const emotionCacheData = JSON.stringify({
+      ids: Object.keys(emotionCache.inserted),
+      key: emotionCache.key
+    });
+    
+    emotionCacheDataString = emotionCacheData;
   } catch (error) {
     console.error(error);
   }
@@ -40,18 +60,6 @@ router.get("(.*)", async (ctx: Koa.Context) => {
   const helmetTags = helmetTagNameList
     .map((tagName) => helmet[tagName].toString())
     .join("");
-
-    // 提取emotion样式 - 确保emotionCache存在
-    let emotionStyleTags = "";
-    if (ctx.emotionCache) {
-      try {
-        const emotionServer = createEmotionServer(ctx.emotionCache);
-        const emotionStyles = emotionServer.extractCriticalToChunks(appContent);
-        emotionStyleTags = emotionServer.constructStyleTagsFromChunks(emotionStyles);
-      } catch (error) {
-        console.error("Emotion server rendering error:", error);
-      }
-    }
 
   ctx.body = renderHtml({
     appContent,
@@ -62,6 +70,7 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     helmetTags,
     htmlAttributes: helmet.htmlAttributes.toString(),
     bodyAttributes: helmet.bodyAttributes.toString(),
+    emotionCacheData: emotionCacheDataString
   });
   SCSheet.seal();
   ctx.queryClient?.clear();

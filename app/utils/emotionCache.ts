@@ -1,4 +1,4 @@
-import createCache from '@emotion/cache';
+import createCache, { EmotionCache } from '@emotion/cache';
 
 export default function createEmotionCache() {
   return createCache({ key: 'mui-css' });

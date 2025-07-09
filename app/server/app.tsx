@@ -7,10 +7,12 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { CacheProvider } from '@emotion/react';
+import { EmotionCache } from '@emotion/cache';
 import App from "index";
 import routes from "routes";
 
-export default async (ctx: Context) => {
+export default async (ctx: Context, emotionCache: EmotionCache) => {
   const queryClient = new QueryClient();
   const prefetchRoutes = matchRoutes(routes, ctx.req.url);
 
@@ -32,7 +34,7 @@ export default async (ctx: Context) => {
   ctx.dehydratedState = dehydratedState;
   ctx.queryClient = queryClient;
 
-  return (
+  const appElement = (
     <StaticRouter location={ctx.req.url}>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={dehydratedState}>
@@ -41,4 +43,15 @@ export default async (ctx: Context) => {
       </QueryClientProvider>
     </StaticRouter>
   );
+
+  // 如果提供了emotionCache，则包裹CacheProvider
+  if (emotionCache) {
+    return (
+      <CacheProvider value={emotionCache}>
+        {appElement}
+      </CacheProvider>
+    );
+  }
+
+  return appElement;
 };

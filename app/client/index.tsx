@@ -3,10 +3,19 @@ import { BrowserRouter } from 'react-router-dom';
 import { loadableReady } from '@loadable/component';
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from 'index';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import createEmotionCache from '../utils/emotionCache';
+import { CacheProvider } from '@emotion/react';
 
 interface TradeFlagType {
   isSSR: boolean;
 }
+
+// 和服务端共享 emotion cache
+const emotionCache = createEmotionCache();
+
+// 创建主题
+const theme = createTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +33,12 @@ const ClientApp = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <Hydrate state={JSON.parse(dehydratedState)}>
-        <App />
+        <CacheProvider value={emotionCache}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </CacheProvider>
       </Hydrate>
     </QueryClientProvider>
   </BrowserRouter>
