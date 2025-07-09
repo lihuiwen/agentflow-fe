@@ -20,6 +20,7 @@ module.exports = [
         assetModuleFilename: "media/[name].[ext]",
         filename: "js/[name].js",
         chunkFilename: "js/[name].chunk.js",
+        publicPath: `http://localhost:${appConstants.devPort}/static/client/`
       },
       devtool: "eval-source-map",
       mode,

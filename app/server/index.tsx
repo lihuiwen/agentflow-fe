@@ -2,6 +2,7 @@ import path from "node:path";
 import Koa from "koa";
 import Router from "@koa/router";
 import { ChunkExtractor } from "@loadable/server";
+import createEmotionServer from "@emotion/server/create-instance";
 import { ServerStyleSheet } from "styled-components";
 import { helmetTagNameList, TempThemeMap } from "@app/utils/constants";
 import { helmetContext } from "index";
@@ -40,12 +41,24 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     .map((tagName) => helmet[tagName].toString())
     .join("");
 
+    // 提取emotion样式 - 确保emotionCache存在
+    let emotionStyleTags = "";
+    if (ctx.emotionCache) {
+      try {
+        const emotionServer = createEmotionServer(ctx.emotionCache);
+        const emotionStyles = emotionServer.extractCriticalToChunks(appContent);
+        emotionStyleTags = emotionServer.constructStyleTagsFromChunks(emotionStyles);
+      } catch (error) {
+        console.error("Emotion server rendering error:", error);
+      }
+    }
+
   ctx.body = renderHtml({
     appContent,
     dehydratedState: JSON.stringify(dehydratedState),
     linkTags: extractor.getLinkTags(),
     scriptTags: extractor.getScriptTags(),
-    styleTags: [extractor.getStyleTags(), SCSheet.getStyleTags()].join(""),
+    styleTags: [extractor.getStyleTags(), SCSheet.getStyleTags(), emotionStyleTags].join(""),
     helmetTags,
     htmlAttributes: helmet.htmlAttributes.toString(),
     bodyAttributes: helmet.bodyAttributes.toString(),

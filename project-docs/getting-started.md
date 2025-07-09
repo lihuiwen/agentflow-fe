@@ -113,14 +113,15 @@ graph LR
 | 分类 | 技术 | 版本 | 作用 |
 |------|------|------|------|
 | **服务端** | Koa + Node.js | 2.14.1 | HTTP服务器框架 |
-| **前端框架** | React | 18.3.1 | UI组件库 |
+| **前端框架** | React | 18.3.1 | 前端框架 |
 | **类型系统** | TypeScript | 5.0.3 | 类型安全 |
 | **构建工具** | Webpack | 5.78.0 | 模块打包器 |
 | **编译器** | Babel | 7.21.4 | JavaScript编译器 |
 | **样式方案** | Styled Components + Tailwind | 5.3.9 + 3.3.1 | CSS-in-JS + 实用类 |
 | **状态管理** | React Query | 4.29.3 | 服务端状态管理 |
 | **路由** | React Router DOM | 6.10.0 | 客户端路由 |
-| **SEO** | React Helmet Async | 1.3.0 | 头部标签管理 |
+| **SEO**      | React Helmet Async           | 1.3.0         | 头部标签管理       |
+| **组件库**   | MUI                          | 7.2.0         | UI组件库           |
 
 ### 开发工具链
 
@@ -313,6 +314,167 @@ tradeFlag.isSSR
 - 代码分割的懒加载就绪检查
 - SSR/CSR模式切换
 - React 18的并发特性支持
+
+### MUI/Material & Lucide-React 使用说明
+
+#### 简介
+
+**MUI (Material-UI)** 是 React 的 Material Design 组件库，提供丰富的 UI 组件。**Lucide-React** 是轻量级的图标库，提供清晰美观的图标。
+
+#### 安装
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled
+npm install lucide-react
+```
+
+#### MUI 基础使用
+
+##### 主要组件
+
+- **Button**: 按钮组件，支持不同样式 (contained, outlined, text)
+- **TextField**: 输入框组件，支持各种输入类型
+- **Typography**: 文本组件，提供标题、正文等样式
+- **Paper**: 纸张效果容器，带阴影
+- **Card**: 卡片组件，展示信息块
+- **Grid**: 栅格布局系统
+- **AppBar**: 应用顶栏
+- **Drawer**: 侧边栏抽屉
+
+##### 基本用法
+
+```jsx
+import { Button, TextField, Typography } from '@mui/material';
+
+// 按钮
+<Button variant="contained" color="primary">点击我</Button>
+
+// 输入框
+<TextField label="用户名" variant="outlined" />
+
+// 标题
+<Typography variant="h4">这是标题</Typography>
+```
+
+#### Lucide-React 图标使用
+
+##### 常用图标
+
+- **User**: 用户图标
+- **Home**: 首页图标
+- **Settings**: 设置图标
+- **Search**: 搜索图标
+- **Bell**: 通知图标
+- **Menu**: 菜单图标
+- **Plus**: 加号图标
+- **Download**: 下载图标
+
+##### 基本用法
+
+```jsx
+import { User, Home, Settings, Search } from 'lucide-react';
+
+// 直接使用
+<User size={24} />
+
+// 设置颜色
+<Home color="blue" size={20} />
+
+// 在按钮中使用
+<Button startIcon={<Settings size={16} />}>
+  设置
+</Button>
+```
+
+#### 组合使用示例
+
+##### 带图标的按钮
+
+```jsx
+import { Button } from '@mui/material';
+import { Download, Send } from 'lucide-react';
+
+<Button variant="contained" startIcon={<Download size={16} />}>
+  下载
+</Button>
+```
+
+##### 带图标的输入框
+
+```jsx
+import { TextField, InputAdornment } from '@mui/material';
+import { User } from 'lucide-react';
+
+<TextField
+  label="用户名"
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <User size={20} />
+      </InputAdornment>
+    ),
+  }}
+/>
+```
+
+#### 主题配置
+
+```jsx
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
+<ThemeProvider theme={theme}>
+  {/* 你的应用 */}
+</ThemeProvider>
+```
+
+#### 最佳实践
+
+1. **统一导入**: 从同一个包导入相关组件
+2. **图标大小**: 通常使用 16px-24px 大小
+3. **颜色一致性**: 使用主题色彩系统
+4. **响应式设计**: 利用 Grid 系统适配不同屏幕
+5. **无障碍访问**: 为图标添加适当的 aria-label
+
+#### 常用组合模式
+
+```jsx
+// 导航栏
+<AppBar position="static">
+  <Toolbar>
+    <Menu />
+    <Typography variant="h6">应用名称</Typography>
+  </Toolbar>
+</AppBar>
+
+// 搜索框
+<TextField
+  placeholder="搜索..."
+  InputProps={{
+    startAdornment: <Search size={20} />
+  }}
+/>
+
+// 用户卡片
+<Card>
+  <CardContent>
+    <User size={24} />
+    <Typography variant="h6">用户名</Typography>
+  </CardContent>
+</Card>
+```
+
+这样的组合使用可以快速构建现代化的 React 应用界面。
 
 ## 🔍 最佳实践建议
 

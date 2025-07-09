@@ -17,7 +17,7 @@ const Layout: React.FC = () => {
           dir: "ltr",
         }}
         bodyAttributes={{
-          class: 'dark'
+          class: ''
         }}
       >
         <title>AgentFlow - 智能代理管理平台</title>
