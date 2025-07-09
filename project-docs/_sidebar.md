@@ -51,6 +51,7 @@
   - [代码规范](development/code-standards.md)
   - [调试技巧](development/debugging.md)
   - [测试策略](development/testing.md)
+  - [UI 库使用指南](ui-libraries.md)
 
 - **其他**
   - [FAQ](faq.md)

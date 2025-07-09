@@ -15,8 +15,8 @@ const Jobs = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs"), null);
 const JobDetail = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobDetail"), null);
 const JobForm = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobForm"), null);
 
-// BadCase演示页面
-const BadCase = loadable(/* #__LOADABLE__ */ () => import("pages/BadCasePage/BadCasePage"), null);
+// Emotion缓存测试页面
+const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
 
 // 404页面
 const NotFound = () => (
@@ -99,10 +99,10 @@ const routes: PreFetchRouteObject[] = [
         </div>,
       },
 
-       // BadCase演示页面
+       // Emotion缓存测试页面
       {
-        path: "badcase",
-        element: <BadCase />,
+        path: "emotion-cache-test",
+        element: <EmotionCacheTest />,
       },
       
       // 404页面 - 放在最后
