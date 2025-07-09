@@ -2,6 +2,7 @@ import path from "node:path";
 import Koa from "koa";
 import Router from "@koa/router";
 import { ChunkExtractor } from "@loadable/server";
+import createEmotionServer from "@emotion/server/create-instance";
 import { ServerStyleSheet } from "styled-components";
 import { helmetTagNameList, TempThemeMap } from "@app/utils/constants";
 import { helmetContext } from "index";
@@ -13,6 +14,7 @@ import {
   renderToReadableStream,
   renderToPipeableStream,
 } from "react-dom/server";
+import createEmotionCache from "@app/utils/emotionCache";
 
 const app = new Koa();
 export const router = new Router();
@@ -25,12 +27,31 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     entrypoints: ["client"],
   });
   const SCSheet = new ServerStyleSheet();
+
+  // 创建emotion cache和server实例
+  const emotionCache = createEmotionCache();
+  const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionServer(emotionCache);
+
   const jsx = SCSheet.collectStyles(
-    extractor.collectChunks(await renderApp(ctx))
+    extractor.collectChunks(await renderApp(ctx, emotionCache))
   );
   let appContent = "";
+  let emotionStyleTags = "";
+  let emotionCacheDataString = "";
   try {
     appContent = await renderToStream(jsx); // 渲染出应用的html字符串
+
+    // 提取emotion样式
+    const emotionChunks = extractCriticalToChunks(appContent);
+    emotionStyleTags = constructStyleTagsFromChunks(emotionChunks);
+    
+    // 序列化emotion缓存状态 - 只保存已插入的样式ID
+    const emotionCacheData = JSON.stringify({
+      ids: Object.keys(emotionCache.inserted),
+      key: emotionCache.key
+    });
+    
+    emotionCacheDataString = emotionCacheData;
   } catch (error) {
     console.error(error);
   }
@@ -45,10 +66,11 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     dehydratedState: JSON.stringify(dehydratedState),
     linkTags: extractor.getLinkTags(),
     scriptTags: extractor.getScriptTags(),
-    styleTags: [extractor.getStyleTags(), SCSheet.getStyleTags()].join(""),
+    styleTags: [extractor.getStyleTags(), SCSheet.getStyleTags(), emotionStyleTags].join(""),
     helmetTags,
     htmlAttributes: helmet.htmlAttributes.toString(),
     bodyAttributes: helmet.bodyAttributes.toString(),
+    emotionCacheData: emotionCacheDataString
   });
   SCSheet.seal();
   ctx.queryClient?.clear();

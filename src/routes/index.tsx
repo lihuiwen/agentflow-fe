@@ -15,6 +15,9 @@ const Jobs = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs"), null);
 const JobDetail = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobDetail"), null);
 const JobForm = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobForm"), null);
 
+// Emotion缓存测试页面
+const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
+
 // 404页面
 const NotFound = () => (
   <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -49,7 +52,13 @@ const routes: PreFetchRouteObject[] = [
           },
           {
             path: ":id",
-            element: <AgentDetail />,
+            element: (
+              <AgentDetail
+                open={true}
+                onClose={() => {}}
+                agent={null}
+              />
+            ),
           },
           {
             path: ":id/edit",
@@ -88,6 +97,12 @@ const routes: PreFetchRouteObject[] = [
           <h1>关于 AgentFlow</h1>
           <p>AgentFlow 是一个智能代理管理平台 - 待完善</p>
         </div>,
+      },
+
+       // Emotion缓存测试页面
+      {
+        path: "emotion-cache-test",
+        element: <EmotionCacheTest />,
       },
       
       // 404页面 - 放在最后
