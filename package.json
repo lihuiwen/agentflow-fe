@@ -11,7 +11,8 @@
     "build:test1": "webpack build --config ./config/webpack.prod.js --env goal=test1",
     "start": "pm2 start ./ecosystem.config.js",
     "mock": "json-server --watch ./mocks/data.json --port 8007",
-    "docs": "pnpm exec docsify serve project-docs"
+    "docs": "pnpm exec docsify serve project-docs",
+    "docs:code": "pnpm exec docsify serve project-docs-code --port 3003"
   },
   "keywords": [],
   "author": "",
