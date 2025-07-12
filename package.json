@@ -11,7 +11,12 @@
     "build:test1": "webpack build --config ./config/webpack.prod.js --env goal=test1",
     "start": "pm2 start ./ecosystem.config.js",
     "mock": "json-server --watch ./mocks/data.json --port 8007",
-    "docs": "pnpm exec docsify serve project-docs"
+    "docs": "pnpm exec docsify serve project-docs",
+    "docs:code": "pnpm exec docsify serve project-docs-code",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "start-server-and-test dev http://localhost:3001 cypress:run",
+    "test:e2e:open": "start-server-and-test dev http://localhost:3001 cypress:open"
   },
   "keywords": [],
   "author": "",
@@ -81,6 +86,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^4.2.2",
+    "cypress": "^14.5.1",
     "docsify-cli": "^4.4.4",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.8.0",

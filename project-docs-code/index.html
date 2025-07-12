@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>agentflow-fe - 代码深度分析</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="AgentFlow-FE 代码深度分析文档">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    :root {
+      --theme-color: #e74c3c;
+      --theme-color-dark: #c0392b;
+    }
+    
+    .markdown-section {
+      max-width: 1200px;
+    }
+    
+    .markdown-section h1 {
+      color: var(--theme-color);
+      border-bottom: 2px solid var(--theme-color);
+      padding-bottom: 0.5rem;
+    }
+    
+    .markdown-section h2 {
+      color: var(--theme-color-dark);
+      border-left: 4px solid var(--theme-color);
+      padding-left: 1rem;
+    }
+    
+    .markdown-section table {
+      border-collapse: collapse;
+      margin: 1rem 0;
+      width: 100%;
+    }
+    
+    .markdown-section table th,
+    .markdown-section table td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    
+    .markdown-section table th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+    }
+    
+    .markdown-section blockquote {
+      background-color: #fff5f5;
+      border-left: 4px solid var(--theme-color);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .markdown-section code {
+      background-color: #f8f9fa;
+      color: #e83e8c;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+    }
+    
+    .markdown-section pre {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    .markdown-section pre code {
+      background-color: transparent;
+      color: #333;
+      padding: 0;
+    }
+
+    /* 代码分析特有样式 */
+    .analysis-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+    
+    .analysis-badge.core { background-color: #e74c3c; color: white; }
+    .analysis-badge.performance { background-color: #f39c12; color: white; }
+    .analysis-badge.architecture { background-color: #9b59b6; color: white; }
+    .analysis-badge.optimization { background-color: #27ae60; color: white; }
+  </style>
+</head>
+<body>
+  <div id="app">🔍 正在加载代码分析文档...</div>
+  <script>
+    window.$docsify = {
+      name: 'AgentFlow-FE 代码分析',
+      repo: 'https://github.com/your-repo/react-custom-ssr',
+      loadSidebar: true,
+      loadNavbar: false,
+      subMaxLevel: 4,
+      auto2top: true,
+      homepage: 'README.md',
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: '🔍 搜索代码分析文档',
+        noData: '😞 没有找到相关内容',
+        depth: 6,
+        hideOtherSidebarContent: false,
+      },
+      count: {
+        countable: true,
+        position: 'top',
+        margin: '10px',
+        float: 'right',
+        fontsize: '0.9em',
+        color: 'rgb(90,90,90)',
+        language: 'chinese'
+      },
+      pagination: {
+        previousText: '上一页',
+        nextText: '下一页',
+        crossChapter: true,
+        crossChapterText: true,
+      },
+      copyCode: {
+        buttonText: '复制代码',
+        errorText: '复制失败',
+        successText: '已复制'
+      },
+      tabs: {
+        persist: true,
+        sync: true,
+        theme: 'classic',
+        tabComments: true,
+        tabHeadings: true
+      },
+      themeable: {
+        readyTransition: true,
+        responsiveTables: true
+      },
+      plugins: [
+        function (hook, vm) {
+          hook.beforeEach(function (html) {
+            var url = 'https://github.com/your-repo/react-custom-ssr/blob/main/project-docs-code/' + vm.route.file
+            var editHtml = '[:memo: 编辑此页](' + url + ')\n'
+            return editHtml + html
+          })
+        }
+      ]
+    }
+  </script>
+  <!-- Docsify v4 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- 代码高亮 -->
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-tsx.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-dockerfile.min.js"></script>
+  <!-- 插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-count@latest/dist/countable.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
+  <!-- Mermaid 图表支持 -->
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
+</body>
+</html>

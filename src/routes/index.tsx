@@ -1,6 +1,10 @@
 import loadable from "@app/utils/loadable";
 import Layout from "components/Layout";
 import { PreFetchRouteObject } from "@app/utils/routesTypes";
+import { PrefetchKeys } from "apis/queryKeys";
+import HomeService from "apis/services/Home";
+import RequestDemoService from "apis/services/RequestDemo";
+import RequestDemoPage from "pages/RequestDemo";
 
 // 懒加载页面组件
 const Home = loadable(/* #__LOADABLE__ */ () => import("pages/Home"), null);
@@ -36,6 +40,8 @@ const routes: PreFetchRouteObject[] = [
       {
         index: true,
         element: <Home />,
+        queryKey: [PrefetchKeys.HOME],
+        loadData: HomeService.getList,
       },
       
       // Agent管理模块
@@ -105,6 +111,14 @@ const routes: PreFetchRouteObject[] = [
         element: <EmotionCacheTest />,
       },
       
+       // RequestDemo测试页面
+      {
+        path: "request-demo",
+        element: <RequestDemoPage />,
+        queryKey: [PrefetchKeys.REQUEST_DEMO],
+        loadData: RequestDemoService.getList,
+      },
+
       // 404页面 - 放在最后
       {
         path: "*",
