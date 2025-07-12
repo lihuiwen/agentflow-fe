@@ -4,6 +4,7 @@ export enum PrefetchKeys {
   AGENT_DETAIL = "agent-detail",
   JOBS = "jobs",
   JOB_DETAIL = "job-detail",
+  REQUEST_DEMO = "request-demo",
 }
 
 // 示例用法：

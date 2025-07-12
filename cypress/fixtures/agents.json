@@ -1,0 +1,82 @@
+{
+  "expectedAgents": [
+    {
+      "id": 1,
+      "name": "量化交易专家",
+      "category": "金融顾问",
+      "rating": 4.8,
+      "reviews": 256,
+      "price": 50,
+      "tags": ["量化交易", "投资分析", "风险控制", "策略优化"]
+    },
+    {
+      "id": 2,
+      "name": "全栈开发助手",
+      "category": "编程开发",
+      "rating": 4.9,
+      "reviews": 432,
+      "price": 30,
+      "tags": ["全栈开发", "代码审查", "架构设计", "DevOps"]
+    },
+    {
+      "id": 3,
+      "name": "数据科学家",
+      "category": "数据分析",
+      "rating": 4.7,
+      "reviews": 198,
+      "price": 40,
+      "tags": ["数据挖掘", "机器学习", "预测建模", "数据可视化"]
+    },
+    {
+      "id": 4,
+      "name": "智能客服助手",
+      "category": "客户服务",
+      "rating": 4.6,
+      "reviews": 324,
+      "price": 25,
+      "tags": ["客户服务", "多语言", "情感分析", "自动回复"]
+    },
+    {
+      "id": 5,
+      "name": "网络安全专家",
+      "category": "安全防护",
+      "rating": 4.8,
+      "reviews": 167,
+      "price": 60,
+      "tags": ["威胁检测", "漏洞扫描", "安全咨询", "风险评估"]
+    }
+  ],
+  "searchTerms": [
+    "量化交易",
+    "开发助手",
+    "数据科学",
+    "客服",
+    "安全"
+  ],
+  "categories": [
+    "金融顾问",
+    "编程开发",
+    "数据分析",
+    "客户服务",
+    "安全防护",
+    "系统优化",
+    "决策支持",
+    "计算机视觉",
+    "区块链技术"
+  ],
+  "testScenarios": {
+    "pagination": {
+      "itemsPerPage": 9,
+      "totalItems": 9
+    },
+    "search": {
+      "validSearchTerms": ["量化", "开发", "数据"],
+      "invalidSearchTerms": ["xyz123", "无效搜索"]
+    },
+    "ui": {
+      "loadingTimeout": 15000,
+      "modalTimeout": 5000,
+      "searchTimeout": 3000
+    }
+  }
+}
