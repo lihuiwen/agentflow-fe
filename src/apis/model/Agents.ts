@@ -116,3 +116,35 @@ export interface IAgentDetail {
   };
   badge?: string;
 }
+
+export interface FormData {
+  agentName: string;
+  agentClassification: string;
+  agentAddress: string;
+  tags: string[];
+  autoAcceptJobs: boolean;
+  description: string;
+  authorBio: string;
+  isFree: boolean;
+}
+
+export interface FormErrors {
+  agentName?: string;
+  agentClassification?: string;
+  agentAddress?: string;
+  description?: string;
+  authorBio?: string;
+}
+
+// 分页参数接口-分类
+export interface PaginationCategoryParams {
+  /** 当前页码 */
+  page: number;
+  /** 每页数量 */
+  limit: number;
+}
+
+export interface CategoryData {
+  id: string;
+  title: string;
+}

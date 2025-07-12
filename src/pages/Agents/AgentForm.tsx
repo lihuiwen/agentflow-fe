@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -16,111 +16,99 @@ import {
   Alert,
   Tooltip,
   IconButton,
-  InputAdornment,
-  Divider,
-  FormHelperText
+  FormHelperText,
 } from '@mui/material';
-import { 
-  Info, 
-  HelpCircle, 
-  Plus, 
-  ExternalLink,
-  RefreshCw,
-  Send,
-  X
-} from 'lucide-react';
+import { Info, HelpCircle, Plus, ExternalLink, RefreshCw, Send, X } from 'lucide-react';
 
-interface FormData {
-  agentName: string;
-  tags: string[];
-  autoAcceptJobs: boolean;
-  agentClassification: string;
-  agentAddress: string;
-  briefDescription: string;
-  authorBio: string;
-  isFree: boolean;
-}
+import { FormData, FormErrors, PaginationCategoryParams, CategoryData } from '@apis/model/Agents';
+import { useQuery } from '@tanstack/react-query';
+import { PrefetchKeys } from '@/apis/queryKeys';
+import AgentService from '@/apis/services/Agent';
 
-interface FormErrors {
-  agentName?: string;
-  agentClassification?: string;
-  agentAddress?: string;
-  briefDescription?: string;
-  authorBio?: string;
-}
-
-const AgentForm: React.FC = () => {
+const getCategoryList = async (): Promise<any> => {
+  const res = await fetch('http://localhost:8088/categories?page=1&limit=10');
+  if (!res.ok) {
+    throw new Error('获取文章失败');
+  }
+  return res.json();
+};
+function AgentForm() {
   const [formData, setFormData] = useState<FormData>({
     agentName: '',
     tags: [],
     autoAcceptJobs: true,
     agentClassification: '',
     agentAddress: '',
-    briefDescription: '',
+    description: '',
     authorBio: '',
-    isFree: true
+    isFree: true,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [currentTag, setCurrentTag] = useState<string>('');
-
+  // Get category data
+  const { data: categoryData } = useQuery({
+    queryKey: ['categoryData'],
+    queryFn: getCategoryList,
+  });
+  console.log(categoryData)
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formData.agentName.trim()) {
       newErrors.agentName = 'Agent name is required';
     }
-    
+
     if (!formData.agentClassification) {
       newErrors.agentClassification = 'Agent classification is required';
     }
-    
+
     if (!formData.agentAddress.trim()) {
       newErrors.agentAddress = 'Agent address is required';
     } else if (!formData.agentAddress.startsWith('https://')) {
       newErrors.agentAddress = 'Agent address must be a valid HTTPS URL';
     }
-    
-    if (!formData.briefDescription.trim()) {
-      newErrors.briefDescription = 'Brief description is required';
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Brief description is required';
     }
-    
+
     if (!formData.authorBio.trim()) {
       newErrors.authorBio = 'Author bio is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleInputChange = (field: keyof FormData, value: string | boolean): void => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    
+
     if (errors[field as keyof FormErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: undefined
+        [field]: undefined,
       }));
     }
   };
 
   const handleAddTag = (): void => {
     if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, currentTag.trim()]
+        tags: [...prev.tags, currentTag.trim()],
       }));
       setCurrentTag('');
     }
   };
 
   const handleRemoveTag = (tagToRemove: string): void => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -131,9 +119,19 @@ const AgentForm: React.FC = () => {
     }
   };
 
+  // Deploy agent
   const handleSubmit = (): void => {
     if (validateForm()) {
-      console.log('Form submitted:', formData);
+      const { isSuccess, error, data } = useQuery({
+        queryKey: [PrefetchKeys.AGENTS],
+        queryFn: AgentService.getList,
+      });
+
+      if (isSuccess) {
+        console.log(data);
+      }
+
+      if (error) console.error(error);
     }
   };
 
@@ -144,9 +142,9 @@ const AgentForm: React.FC = () => {
       autoAcceptJobs: true,
       agentClassification: '',
       agentAddress: '',
-      briefDescription: '',
+      description: '',
       authorBio: '',
-      isFree: true
+      isFree: true,
     });
     setErrors({});
     setCurrentTag('');
@@ -156,12 +154,12 @@ const AgentForm: React.FC = () => {
     <Box sx={{ maxWidth: 900, mx: 'auto' }}>
       <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
         {/* Header */}
-        <Box 
-          sx={{ 
+        <Box
+          sx={{
             background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
             color: 'white',
             p: 3,
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           <Typography variant="h5" component="h1" gutterBottom fontWeight="500">
@@ -176,22 +174,23 @@ const AgentForm: React.FC = () => {
         <Box sx={{ p: 4, display: 'none' }}>
           <Alert severity="info" sx={{ mb: 2 }}>
             <Typography variant="body2">
-              <strong>Agent payment is result-oriented</strong>, meaning payment is based on the Agent's execution results. 
-              Funds are temporarily held in escrow by the open-source <strong>Aladdin Protocol</strong> contract.
+              <strong>Agent payment is result-oriented</strong>, meaning payment is based on the Agent's execution
+              results. Funds are temporarily held in escrow by the open-source <strong>Aladdin Protocol</strong>{' '}
+              contract.
             </Typography>
           </Alert>
-          
+
           <Alert severity="info" sx={{ mb: 2 }}>
             <Typography variant="body2">
-              The settlement process is automatically completed using a third-party verification system. 
-              In case of disputes, the DAO committee will make the final decision.
+              The settlement process is automatically completed using a third-party verification system. In case of
+              disputes, the DAO committee will make the final decision.
             </Typography>
           </Alert>
-          
+
           <Alert severity="info">
             <Typography variant="body2">
-              Before settlement, the Agent's funds are held in escrow by the contract and can earn 
-              additional stablecoin staking rewards.
+              Before settlement, the Agent's funds are held in escrow by the contract and can earn additional stablecoin
+              staking rewards.
             </Typography>
           </Alert>
         </Box>
@@ -247,17 +246,13 @@ const AgentForm: React.FC = () => {
                   onChange={(e) => handleInputChange('agentClassification', e.target.value)}
                   displayEmpty
                 >
-                  <MenuItem value="">Select Agent classification</MenuItem>
-                  <MenuItem value="data-analysis">Data Analysis</MenuItem>
-                  <MenuItem value="automation">Automation</MenuItem>
-                  <MenuItem value="ai-assistant">AI Assistant</MenuItem>
-                  <MenuItem value="research">Research</MenuItem>
-                  <MenuItem value="creative">Creative</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
+                  {categoryData && categoryData.data ? categoryData.data.map((item) => (
+                    <MenuItem value={item.id} key={item.id}>
+                      {item.title}
+                    </MenuItem>
+                  )) : ''}
                 </Select>
-                {errors.agentClassification && (
-                  <FormHelperText>{errors.agentClassification}</FormHelperText>
-                )}
+                {errors.agentClassification && <FormHelperText>{errors.agentClassification}</FormHelperText>}
               </FormControl>
             </Grid>
           </Grid>
@@ -323,20 +318,15 @@ const AgentForm: React.FC = () => {
                   size="small"
                   variant="outlined"
                 />
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleAddTag}
-                  sx={{ minWidth: 'auto', px: 1.5 }}
-                >
+                <Button variant="outlined" size="small" onClick={handleAddTag} sx={{ minWidth: 'auto', px: 1.5 }}>
                   <Plus size={14} />
                 </Button>
               </Box>
-              
+
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 e.g., data analysis, automation, AI assistant
               </Typography>
-              
+
               {formData.tags.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {formData.tags.map((tag, index) => (
@@ -404,10 +394,10 @@ const AgentForm: React.FC = () => {
                 multiline
                 rows={3}
                 size="small"
-                value={formData.briefDescription}
-                onChange={(e) => handleInputChange('briefDescription', e.target.value)}
-                error={!!errors.briefDescription}
-                helperText={errors.briefDescription}
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                error={!!errors.description}
+                helperText={errors.description}
                 placeholder="Briefly describe the functionality of this Agent"
                 variant="outlined"
               />
@@ -485,20 +475,14 @@ const AgentForm: React.FC = () => {
           >
             Reset
           </Button>
-          
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            endIcon={<Send size={14} />}
-            size="medium"
-            sx={{ px: 3 }}
-          >
+
+          <Button variant="contained" onClick={handleSubmit} endIcon={<Send size={14} />} size="medium" sx={{ px: 3 }}>
             Deploy
           </Button>
         </Box>
       </Paper>
     </Box>
   );
-};
+}
 
 export default AgentForm;
