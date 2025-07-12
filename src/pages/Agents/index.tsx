@@ -19,7 +19,7 @@ import {
   TextSearch,
 } from 'lucide-react';
 
-import type { Agent, AgentsApiResponse, IAgentDetail } from 'types/agents';
+import type { Agent, AgentsApiResponse, IAgentDetail } from '@apis/model/Agents';
 import AgentDetail from "./AgentDetail";
 
 const agentsData = [
