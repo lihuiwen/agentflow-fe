@@ -20,7 +20,6 @@ module.exports = [
         assetModuleFilename: "media/[name].[ext]",
         filename: "js/[name].js",
         chunkFilename: "js/[name].chunk.js",
-        publicPath: `http://localhost:${appConstants.devPort}/static/client/`
       },
       devtool: "eval-source-map",
       mode,
@@ -28,7 +27,9 @@ module.exports = [
       watchOptions: {
         ignored: /node_modules\/\.cache/,
       },
+      // 这个 devServer 其实没啥用
       devServer: {
+        // 将 devMiddleware 的配置直接写在devMiddleware中了，这里不再需要
         devMiddleware: {
           publicPath: appConstants.publicPath,
           serverSideRender: true,
