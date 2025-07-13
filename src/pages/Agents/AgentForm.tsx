@@ -20,19 +20,11 @@ import {
 } from '@mui/material';
 import { Info, HelpCircle, Plus, ExternalLink, RefreshCw, Send, X } from 'lucide-react';
 
-import { FormData, FormErrors, PaginationCategoryParams, CategoryData } from '@apis/model/Agents';
-import { useQuery } from '@tanstack/react-query';
-import { PrefetchKeys } from '@/apis/queryKeys';
-import AgentService from '@/apis/services/Agent';
+import { FormData, FormErrors, PaginationCategoryParams, CategoryData, CategoryDataRes } from '@apis/model/Agents';
+import { useNavigate } from 'react-router-dom';
 
-const getCategoryList = async (): Promise<any> => {
-  const res = await fetch('http://localhost:8088/categories?page=1&limit=10');
-  if (!res.ok) {
-    throw new Error('获取文章失败');
-  }
-  return res.json();
-};
 function AgentForm() {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     agentName: '',
     tags: [],
@@ -41,17 +33,20 @@ function AgentForm() {
     agentAddress: '',
     description: '',
     authorBio: '',
-    isFree: true,
+    // isFree: true,
+    walletAddress: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [currentTag, setCurrentTag] = useState<string>('');
-  // Get category data
-  const { data: categoryData } = useQuery({
-    queryKey: ['categoryData'],
-    queryFn: getCategoryList,
-  });
-  console.log(categoryData)
+  const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+
+  const navigate = useNavigate();
+  
+  // 页面初始化执行内容
+  useEffect(() => {
+    getCategoryList();
+  }, []);
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -120,18 +115,21 @@ function AgentForm() {
   };
 
   // Deploy agent
-  const handleSubmit = (): void => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      const { isSuccess, error, data } = useQuery({
-        queryKey: [PrefetchKeys.AGENTS],
-        queryFn: AgentService.getList,
+      setLoading(true);
+      const response = await fetch('http://localhost:8088/agents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-
-      if (isSuccess) {
-        console.log(data);
+      if(response) {
+        // 跳转到列表页
+        navigate('/agents');
       }
-
-      if (error) console.error(error);
+      setLoading(false);
     }
   };
 
@@ -144,12 +142,25 @@ function AgentForm() {
       agentAddress: '',
       description: '',
       authorBio: '',
-      isFree: true,
+      // isFree: true,
+      walletAddress: '',
     });
     setErrors({});
     setCurrentTag('');
   };
 
+  // 获取 Agents 分类
+  const getCategoryList = async () => {
+    const res = await fetch('http://localhost:8088/categories?page=1&limit=10');
+    if (!res.ok) {
+      throw new Error('获取文章失败');
+    }
+    const resCate: CategoryDataRes = await res.json();
+    setCategoryData(resCate.data);
+    console.log(resCate.data);
+  };
+
+  // tsx
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto' }}>
       <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -246,11 +257,13 @@ function AgentForm() {
                   onChange={(e) => handleInputChange('agentClassification', e.target.value)}
                   displayEmpty
                 >
-                  {categoryData && categoryData.data ? categoryData.data.map((item) => (
-                    <MenuItem value={item.id} key={item.id}>
-                      {item.title}
-                    </MenuItem>
-                  )) : ''}
+                  {categoryData && categoryData.length
+                    ? categoryData.map((item) => (
+                        <MenuItem value={item.id} key={item.id}>
+                          {item.title}
+                        </MenuItem>
+                      ))
+                    : ''}
                 </Select>
                 {errors.agentClassification && <FormHelperText>{errors.agentClassification}</FormHelperText>}
               </FormControl>
@@ -435,7 +448,7 @@ function AgentForm() {
           </Grid>
 
           {/* Is Free */}
-          <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'center' }}>
+          {/* <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'center' }}>
             <Grid size={{ xs: 12, md: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: { md: 'flex-end' } }}>
                 <Typography variant="body2" fontWeight="500">
@@ -448,7 +461,7 @@ function AgentForm() {
                 </Tooltip>
               </Box>
             </Grid>
-            <Grid size={{ xs: 12, md: 9 }}>
+             <Grid size={{ xs: 12, md: 9 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -460,8 +473,8 @@ function AgentForm() {
                 }
                 label={<Typography variant="body2">Free to use</Typography>}
               />
-            </Grid>
-          </Grid>
+            </Grid> 
+          </Grid>*/}
         </Box>
 
         {/* Form Actions */}

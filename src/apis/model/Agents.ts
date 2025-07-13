@@ -1,36 +1,38 @@
-export interface Agent {
-  /** 代理唯一标识符 */
-  id: number;
-  /** 代理名称 */
-  name: string;
-  /** 代理类别 */
-  category: string;
-  /** 评分 (1-5) */
-  rating: number;
-  /** 评价数量 */
-  reviews: number;
-  /** 代理描述 */
-  description: string;
-  /** 技能标签列表 */
-  tags: string[];
-  /** 价格 (USDT/月) */
-  price: number;
-  /** 代理状态 */
-  status: string;
-  /** 图标类型 */
-  icon: string;
+// 通用响应结构
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
 }
 
 // API响应接口
 export interface AgentsApiResponse {
-  /** 代理列表 */
-  agents: Agent[];
-  /** 总数量 */
+  data?: Agent[];
   total?: number;
-  /** 当前页码 */
   page?: number;
-  /** 每页数量 */
-  pageSize?: number;
+  limit?: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+}
+export interface Agent {
+  id?: string;
+  agentName?: string;
+  agentAddress?: string;
+  description?: string;
+  authorBio?: string;
+  agentClassification?: string;
+  tags?: string[];
+  isPrivate?: boolean;
+  autoAcceptJobs?: boolean;
+  contractType?: string;
+  isActive?: boolean;
+  reputation?: number;
+  successRate?: number;
+  totalJobsCompleted?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  walletAddress?: string;
 }
 
 // 分页参数接口
@@ -39,10 +41,6 @@ export interface PaginationParams {
   page: number;
   /** 每页数量 */
   pageSize: number;
-  /** 总页数 */
-  totalPages: number;
-  /** 总数量 */
-  total: number;
 }
 
 // 搜索过滤参数接口
@@ -125,7 +123,8 @@ export interface FormData {
   autoAcceptJobs: boolean;
   description: string;
   authorBio: string;
-  isFree: boolean;
+  // isFree: boolean;
+  walletAddress: string;
 }
 
 export interface FormErrors {
@@ -144,6 +143,16 @@ export interface PaginationCategoryParams {
   limit: number;
 }
 
+// 分类接口
+export interface CategoryDataRes {
+  data?: CategoryData[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+}
 export interface CategoryData {
   id: string;
   title: string;
