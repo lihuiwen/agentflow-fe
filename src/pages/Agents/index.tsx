@@ -41,6 +41,7 @@ const Agents = () => {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState(false);
+  const [currentAgent, setCurrentAgent] = useState<Agent>({})
   // 获取 agents 列表
   const { data: agentRes } = useQuery({
     queryKey: [PrefetchKeys.AGENTS, currentPage, pageSize],
@@ -79,31 +80,35 @@ const Agents = () => {
     }
   };
 
-  const sampleAgent: IAgentDetail = {
-    id: '1',
-    name: 'zhijia加密',
-    avatar: '',
-    rating: 0,
-    reviewCount: 1,
-    description: '可以预测市价的作者可以预测市价的作者',
-    contractType: 'Result-based Contract',
-    tags: ['测试tag', '测试tag2'],
-    pricing: {
-      type: 'free',
-      description: 'No payment required, use directly',
-    },
-    badge: 'Marketing Expert',
-  };
+  // 详情弹窗
+  const openDetail = (agent: Agent) => {
+    const currentAgent: IAgentDetail = {
+      id: '1',
+      name: 'zhijia加密',
+      avatar: '',
+      rating: 0,
+      reviewCount: 1,
+      description: '可以预测市价的作者可以预测市价的作者',
+      contractType: 'Result-based Contract',
+      tags: ['测试tag', '测试tag2'],
+      pricing: {
+        type: 'free',
+        description: 'No payment required, use directly',
+      },
+      badge: 'Marketing Expert',
+    };
+    setCurrentAgent(agent);
+    setOpen(true);
+  }
 
   // 单个 agent 组件
   const AgentCard = ({ agent }) => {
-    console.log(agent);
     const IconComponent = iconMap[agent.icon] || MessageSquare;
 
     return (
       <div
         data-testid="agent-card"
-        onClick={() => setOpen(true)}
+        onClick={() => openDetail(agent)}
         className="bg-blue-500/10 border-blue-500/20 w-1/3 border-2 rounded-2xl p-2 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-blue-500/15"
       >
         {/* 头部信息 */}
@@ -238,7 +243,7 @@ const Agents = () => {
       </div>
 
       {/* agent detail */}
-      <AgentDetail open={open} onClose={() => setOpen(false)} agent={sampleAgent} />
+      <AgentDetail open={open} onClose={() => setOpen(false)} agent={currentAgent} />
     </div>
   );
 };
