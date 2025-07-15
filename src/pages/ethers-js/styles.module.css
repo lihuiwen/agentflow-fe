@@ -1,0 +1,58 @@
+.container {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.walletInfo {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.error {
+  color: #ff4d4f;
+  margin: 10px 0;
+  background: rgba(255, 77, 79, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.signatureInfo {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #2a2a2a;
+  text-align: left;
+}
+
+.signatureInfo pre {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  color: #e0e0e0;
+}
+
+.loggedIn {
+  color: #52c41a;
+  font-weight: bold;
+  background: rgba(82, 196, 26, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}

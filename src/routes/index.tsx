@@ -24,11 +24,47 @@ const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("@pages/Emoti
 
 // 404页面
 const NotFound = () => (
-  <div style={{ textAlign: 'center', padding: '2rem' }}>
+  <div style={{ textAlign: "center", padding: "2rem" }}>
     <h1>404 - 页面未找到</h1>
     <p>抱歉，您访问的页面不存在。</p>
-    <a href="/" style={{ color: '#3b82f6' }}>返回首页</a>
+    <a href="/" style={{ color: "#3b82f6" }}>
+      返回首页
+    </a>
   </div>
+);
+
+import { menuCategories } from "../config/navigation";
+// 静态导入所有组件
+const NativeEthereum = loadable(
+  () => import("@pages/native-ethereum/page"),
+  null
+);
+const NativeEthereumJs = loadable(
+  () => import("@pages/native-ethereum-js/page"),
+  null
+);
+const EthersJs = loadable(() => import("@pages/ethers-js/page"), null);
+// ... 其他组件
+
+// 创建路径到组件的映射
+const componentMap: Record<string, React.ComponentType> = {
+  "native-ethereum": NativeEthereum,
+  "native-ethereum-js": NativeEthereumJs,
+  "ethers-js": EthersJs,
+  // ... 其他映射
+};
+
+// 从 navigation 配置生成路由
+export const web3Routes = menuCategories.flatMap((category) =>
+  category.items.map((item) => {
+    const path = item.href.slice(1);
+    const Component = componentMap[path];
+
+    return {
+      path,
+      element: Component ? <Component /> : <div>页面开发中...</div>,
+    };
+  })
 );
 
 const routes: PreFetchRouteObject[] = [
@@ -43,7 +79,7 @@ const routes: PreFetchRouteObject[] = [
         queryKey: [PrefetchKeys.HOME],
         loadData: HomeService.getList,
       },
-      
+
       // Agent管理模块
       {
         path: "agents",
@@ -72,7 +108,7 @@ const routes: PreFetchRouteObject[] = [
           },
         ],
       },
-      
+
       // Job管理模块
       {
         path: "jobs",
@@ -95,14 +131,16 @@ const routes: PreFetchRouteObject[] = [
           },
         ],
       },
-      
+
       // 其他页面
       {
         path: "about",
-        element: <div style={{ padding: '2rem' }}>
-          <h1>关于 AgentFlow</h1>
-          <p>AgentFlow 是一个智能代理管理平台 - 待完善</p>
-        </div>,
+        element: (
+          <div style={{ padding: "2rem" }}>
+            <h1>关于 AgentFlow</h1>
+            <p>AgentFlow 是一个智能代理管理平台 - 待完善</p>
+          </div>
+        ),
       },
 
        // Emotion缓存测试页面
@@ -118,6 +156,7 @@ const routes: PreFetchRouteObject[] = [
         queryKey: [PrefetchKeys.REQUEST_DEMO],
         loadData: RequestDemoService.getList,
       },
+      ...web3Routes,
 
       // 404页面 - 放在最后
       {
