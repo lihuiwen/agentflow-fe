@@ -1,4 +1,4 @@
-import path from "node:path";
+import path, { join } from "node:path";
 import Koa from "koa";
 import Router from "@koa/router";
 import { ChunkExtractor } from "@loadable/server";
@@ -15,6 +15,7 @@ import {
   renderToPipeableStream,
 } from "react-dom/server";
 import createEmotionCache from "@app/utils/emotionCache";
+import appConstants from "../../config/constants";
 
 const app = new Koa();
 export const router = new Router();
@@ -22,15 +23,22 @@ export const router = new Router();
 const statsFile = path.resolve(__dirname, "./loadable-stats.json");
 
 router.get("(.*)", async (ctx: Koa.Context) => {
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const extractorPublicPath = isDevelopment
+    ? `http://localhost:${appConstants.hmrPort}${appConstants.publicPath}/client/`
+    : join(appConstants.publicPath, "client/"); // 生产环境使用相对路径
+
   const extractor = new ChunkExtractor({
     statsFile,
     entrypoints: ["client"],
+    publicPath: extractorPublicPath,
   });
   const SCSheet = new ServerStyleSheet();
 
   // 创建emotion cache和server实例
   const emotionCache = createEmotionCache();
-  const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionServer(emotionCache);
+  const { extractCriticalToChunks, constructStyleTagsFromChunks } =
+    createEmotionServer(emotionCache);
 
   const jsx = SCSheet.collectStyles(
     extractor.collectChunks(await renderApp(ctx, emotionCache))
@@ -44,13 +52,13 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     // 提取emotion样式
     const emotionChunks = extractCriticalToChunks(appContent);
     emotionStyleTags = constructStyleTagsFromChunks(emotionChunks);
-    
+
     // 序列化emotion缓存状态 - 只保存已插入的样式ID
     const emotionCacheData = JSON.stringify({
       ids: Object.keys(emotionCache.inserted),
-      key: emotionCache.key
+      key: emotionCache.key,
     });
-    
+
     emotionCacheDataString = emotionCacheData;
   } catch (error) {
     console.error(error);
@@ -66,11 +74,15 @@ router.get("(.*)", async (ctx: Koa.Context) => {
     dehydratedState: JSON.stringify(dehydratedState),
     linkTags: extractor.getLinkTags(),
     scriptTags: extractor.getScriptTags(),
-    styleTags: [extractor.getStyleTags(), SCSheet.getStyleTags(), emotionStyleTags].join(""),
+    styleTags: [
+      extractor.getStyleTags(),
+      SCSheet.getStyleTags(),
+      emotionStyleTags,
+    ].join(""),
     helmetTags,
     htmlAttributes: helmet.htmlAttributes.toString(),
     bodyAttributes: helmet.bodyAttributes.toString(),
-    emotionCacheData: emotionCacheDataString
+    emotionCacheData: emotionCacheDataString,
   });
   SCSheet.seal();
   ctx.queryClient?.clear();

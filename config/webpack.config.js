@@ -63,15 +63,15 @@ const common = {
   resolve: {
     modules: ["node_modules", resolve("src"), resolve("app")],
     alias: {
-      '@': resolve('src/'),
-      '@components': resolve('src/components'),
-      '@hooks': resolve('src/hooks'),
-      '@pages': resolve('src/pages'),
-      '@assets': resolve('src/assets'),
-      '@utils': resolve('src/utils'),
-      '@store': resolve('src/store'),
-      '@apis': resolve('src/apis'),
-      '@types': resolve('src/types'),
+      "@": resolve("src/"),
+      "@components": resolve("src/components"),
+      "@hooks": resolve("src/hooks"),
+      "@pages": resolve("src/pages"),
+      "@assets": resolve("src/assets"),
+      "@utils": resolve("src/utils"),
+      "@store": resolve("src/store"),
+      "@apis": resolve("src/apis"),
+      "@types": resolve("src/types"),
     },
     extensions: [".js", ".ts", ".tsx", ".jsx"],
     plugins: [
@@ -86,6 +86,10 @@ const common = {
 const baseClientConfig = (env) => {
   const isDevelopment = /^dev/.test(env.mode);
 
+  const publicPath = isDevelopment
+    ? `http://localhost:${appConstants.hmrPort}${appConstants.publicPath}/client/`
+    : join(appConstants.publicPath, "client/");
+
   return merge(common, {
     name: `client:${name}`,
     target: "browserslist",
@@ -94,7 +98,7 @@ const baseClientConfig = (env) => {
     },
     output: {
       path: join(appConstants.buildPath, "client"),
-      publicPath: `/static/client/`,
+      publicPath,
       clean: true,
     },
     module: {
