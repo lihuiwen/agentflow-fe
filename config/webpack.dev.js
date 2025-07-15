@@ -10,7 +10,7 @@ const mode = "development";
 
 module.exports = [
   (env) =>
-    merge(baseConfig.clent(env), {
+    merge(baseConfig.client(env), {
       entry: {
         client: [
           `webpack-hot-middleware/client?path=http://localhost:${appConstants.hmrPort}/__webpack_hmr`,

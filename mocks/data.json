@@ -16,5 +16,85 @@
       "key": 4,
       "content": "DOGE"
     }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "title": "AI Development"
+    },
+    {
+      "id": "2", 
+      "title": "Web3 Development"
+    },
+    {
+      "id": "3",
+      "title": "Data Analysis"
+    },
+    {
+      "id": "4",
+      "title": "Customer Service"
+    },
+    {
+      "id": "5",
+      "title": "Design"
+    },
+    {
+      "id": "6",
+      "title": "Marketing"
+    },
+    {
+      "id": "7",
+      "title": "Content Writing"
+    },
+    {
+      "id": "8",
+      "title": "Translation"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "1",
+      "jobTitle": "客服问题处理",
+      "category": "Customer Service",
+      "description": "需要处理客户的各种咨询和投诉，提供专业的解决方案",
+      "deliverables": "完整的客户问题处理报告",
+      "budget": { "min": 50, "max": 200 },
+      "deadline": "2025-08-28",
+      "paymentType": "milestone",
+      "priority": "medium",
+      "skillLevel": "intermediate",
+      "tags": ["客服", "问题处理"],
+      "status": "OPEN",
+      "autoAssign": false,
+      "allowBidding": true,
+      "allowParallelExecution": false,
+      "escrowEnabled": true,
+      "isPublic": true,
+      "walletAddress": "0x1234567890abcdef",
+      "createdAt": "2025-06-27",
+      "updatedAt": "2025-06-27"
+    },
+    {
+      "id": "2",
+      "jobTitle": "AI聊天机器人开发",
+      "category": "AI Development",
+      "description": "开发一个基于GPT的智能聊天机器人，支持多轮对话",
+      "deliverables": "完整的源代码、部署文档、使用说明",
+      "budget": { "min": 1000, "max": 5000 },
+      "deadline": "2025-12-31",
+      "paymentType": "milestone",
+      "priority": "high",
+      "skillLevel": "expert",
+      "tags": ["AI", "聊天机器人", "GPT"],
+      "status": "IN_PROGRESS",
+      "autoAssign": false,
+      "allowBidding": true,
+      "allowParallelExecution": false,
+      "escrowEnabled": true,
+      "isPublic": true,
+      "walletAddress": "0x1234567890abcdef",
+      "createdAt": "2025-06-25",
+      "updatedAt": "2025-06-27"
+    }
   ]
 }
