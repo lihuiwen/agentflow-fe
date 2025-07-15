@@ -1,26 +1,26 @@
 import loadable from "@app/utils/loadable";
-import Layout from "components/Layout";
+import Layout from "@components/Layout";
 import { PreFetchRouteObject } from "@app/utils/routesTypes";
-import { PrefetchKeys } from "apis/queryKeys";
-import HomeService from "apis/services/Home";
-import RequestDemoService from "apis/services/RequestDemo";
-import RequestDemoPage from "pages/RequestDemo";
+import { PrefetchKeys } from "@apis/queryKeys";
+import HomeService from "@apis/services/Home";
+import RequestDemoService from "@apis/services/RequestDemo";
+import RequestDemoPage from "@pages/RequestDemo";
 
 // 懒加载页面组件
-const Home = loadable(/* #__LOADABLE__ */ () => import("pages/Home"), null);
+const Home = loadable(/* #__LOADABLE__ */ () => import("@pages/Home"), null);
 
 // Agent相关页面
-const Agents = loadable(/* #__LOADABLE__ */ () => import("pages/Agents"), null);
-const AgentDetail = loadable(/* #__LOADABLE__ */ () => import("pages/Agents/AgentDetail"), null);
-const AgentForm = loadable(/* #__LOADABLE__ */ () => import("pages/Agents/AgentForm"), null);
+const Agents = loadable(/* #__LOADABLE__ */ () => import("@pages/Agents"), null);
+const AgentDetail = loadable(/* #__LOADABLE__ */ () => import("@pages/Agents/AgentDetail"), null);
+const AgentForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Agents/AgentForm"), null);
 
 // Job相关页面  
-const Jobs = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs"), null);
-const JobDetail = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobDetail"), null);
-const JobForm = loadable(/* #__LOADABLE__ */ () => import("pages/Jobs/JobForm"), null);
+const Jobs = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs"), null);
+const JobDetail = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/JobDetail"), null);
+const JobForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/JobForm"), null);
 
 // Emotion缓存测试页面
-const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
+const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("@pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
 
 // 404页面
 const NotFound = () => (

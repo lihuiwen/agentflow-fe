@@ -1,10 +1,9 @@
-import { Params } from "react-router-dom";
-// import axios from "axios";
+import apiClient from "../index";
 import { HomeResponse } from "../model/Home";
 
 class HomeService {
-  static async getList(params: Params<string>): Promise<HomeResponse[]> {
-    // return axios.get("/home");
+  static async getList(params: {}): Promise<HomeResponse[]> {
+    // return apiClient.get("/home");
     return [
       {
         key: 1,

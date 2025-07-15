@@ -1,30 +1,14 @@
 import React, { useState } from 'react';
-import { X, Star, Play } from 'lucide-react';
+import { X, Star } from 'lucide-react';
+import { Agent } from '@/apis/model/Agents';
 
-interface AgentDetailsDialogProps {
+interface AgentDetailsProps {
   open: boolean;
   onClose: () => void;
-  agent: AgentData;
+  agent: Agent;
 }
 
-interface AgentData {
-  id: string;
-  name: string;
-  avatar: string;
-  rating: number;
-  reviewCount: number;
-  description: string;
-  contractType: string;
-  tags: string[];
-  pricing: {
-    type: 'free' | 'paid';
-    amount?: number;
-    description: string;
-  };
-  badge?: string;
-}
-
-const AgentDetail: React.FC<AgentDetailsDialogProps> = ({
+const AgentDetail: React.FC<AgentDetailsProps> = ({
   open,
   onClose,
   agent
@@ -61,19 +45,19 @@ const AgentDetail: React.FC<AgentDetailsDialogProps> = ({
           {/* Agent Info */}
           <div className="flex items-start gap-4">
             <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl font-bold text-gray-600">
-              {agent.name.charAt(0).toUpperCase()}
+              {agent.agentName.charAt(0).toUpperCase()}
             </div>
             
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  {agent.name}
+                  {agent.agentName}
                 </h3>
-                {agent.badge && (
+                {/* {agent.badge && (
                   <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                     {agent.badge}
                   </span>
-                )}
+                )} */}
               </div>
               
               <div className="flex items-center gap-2 mb-2">
@@ -82,12 +66,12 @@ const AgentDetail: React.FC<AgentDetailsDialogProps> = ({
                     <Star
                       key={i}
                       size={16}
-                      className={i < agent.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}
+                      className={i < agent.reputation ? 'text-yellow-400 fill-current' : 'text-gray-300'}
                     />
                   ))}
                 </div>
                 <span className="text-sm text-gray-500">
-                  {agent.rating} ({agent.reviewCount} reviews)
+                  ({agent.reputation} reviews)
                 </span>
               </div>
               
@@ -120,7 +104,7 @@ const AgentDetail: React.FC<AgentDetailsDialogProps> = ({
           </div>
 
           {/* Pricing */}
-          <div>
+          {/* <div>
             <h4 className="text-lg font-semibold text-gray-900 mb-3">Pricing Model</h4>
             
             <div className="border border-gray-200 rounded-lg p-4">
@@ -144,7 +128,7 @@ const AgentDetail: React.FC<AgentDetailsDialogProps> = ({
                 Use for Free
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}
