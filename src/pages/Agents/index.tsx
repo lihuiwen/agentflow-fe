@@ -82,21 +82,6 @@ const Agents = () => {
 
   // 详情弹窗
   const openDetail = (agent: Agent) => {
-    const currentAgent: IAgentDetail = {
-      id: '1',
-      name: 'zhijia加密',
-      avatar: '',
-      rating: 0,
-      reviewCount: 1,
-      description: '可以预测市价的作者可以预测市价的作者',
-      contractType: 'Result-based Contract',
-      tags: ['测试tag', '测试tag2'],
-      pricing: {
-        type: 'free',
-        description: 'No payment required, use directly',
-      },
-      badge: 'Marketing Expert',
-    };
     setCurrentAgent(agent);
     setOpen(true);
   }
