@@ -20,136 +20,16 @@ import {
   Alert,
   Paper,
   Divider,
-  Stack
+  Stack,
+  Avatar,
+  IconButton,
+  Tooltip,
+  Badge
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { Plus, Search, Filter, TrendingUp, Calendar, DollarSign, User } from 'lucide-react';
+import { Plus, Search, Filter, TrendingUp, Calendar, DollarSign, User, Eye, Edit3, Zap, Clock, Target, MoreVertical } from 'lucide-react';
 import JobService from '../../apis/services/Job';
 import { PrefetchKeys } from '../../apis/queryKeys';
 import { Job, JobFilterParams } from '../../apis/model/Job';
-
-// 样式化组件
-const HeroBanner = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  color: 'white',
-  padding: theme.spacing(4),
-  borderRadius: theme.spacing(2),
-  marginBottom: theme.spacing(3),
-  textAlign: 'center'
-}));
-
-const StatsCard = styled(Card)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-  border: 'none',
-  borderRadius: theme.spacing(2),
-  transition: 'transform 0.2s',
-  '&:hover': {
-    transform: 'translateY(-2px)'
-  }
-}));
-
-const JobCard = styled(Card)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 0.9)',
-  backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  borderRadius: theme.spacing(2),
-  transition: 'all 0.3s ease',
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: '0 12px 24px rgba(0,0,0,0.15)'
-  }
-}));
-
-const FilterSection = styled(Paper)(({ theme }) => ({
-  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
-  backdropFilter: 'blur(20px)',
-  padding: theme.spacing(3),
-  borderRadius: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  border: '1px solid rgba(255, 255, 255, 0.4)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: theme.spacing(3),
-    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-    zIndex: -1
-  },
-  position: 'relative'
-}));
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    background: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: theme.spacing(2),
-    transition: 'all 0.3s ease',
-    border: '1px solid rgba(102, 126, 234, 0.2)',
-    '&:hover': {
-      background: 'rgba(255, 255, 255, 1)',
-      borderColor: 'rgba(102, 126, 234, 0.4)',
-      transform: 'translateY(-1px)',
-      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)'
-    },
-    '&.Mui-focused': {
-      background: 'rgba(255, 255, 255, 1)',
-      borderColor: '#667eea',
-      boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)'
-    }
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none'
-  }
-}));
-
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    background: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: theme.spacing(2),
-    transition: 'all 0.3s ease',
-    border: '1px solid rgba(102, 126, 234, 0.2)',
-    '&:hover': {
-      background: 'rgba(255, 255, 255, 1)',
-      borderColor: 'rgba(102, 126, 234, 0.4)',
-      transform: 'translateY(-1px)',
-      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)'
-    },
-    '&.Mui-focused': {
-      background: 'rgba(255, 255, 255, 1)',
-      borderColor: '#667eea',
-      boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)'
-    }
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none'
-  },
-  '& .MuiInputLabel-root': {
-    color: 'rgba(0, 0, 0, 0.7)',
-    fontWeight: 500
-  }
-}));
-
-const FilterButton = styled(Button)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  color: 'white',
-  borderRadius: theme.spacing(2),
-  padding: theme.spacing(1.5, 3),
-  textTransform: 'none',
-  fontWeight: 600,
-  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
-  transition: 'all 0.3s ease',
-  '&:hover': {
-    background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)'
-  }
-}));
 
 const Jobs: React.FC = () => {
   const [filters, setFilters] = useState<JobFilterParams>({
@@ -223,6 +103,51 @@ const Jobs: React.FC = () => {
     }
   };
 
+  // 获取状态样式（扁平化）
+  const getStatusStyle = (status: Job['status']) => {
+    switch (status) {
+      case 'OPEN': 
+        return 'bg-green-100 text-green-800';
+      case 'IN_PROGRESS': 
+        return 'bg-yellow-100 text-yellow-800';
+      case 'COMPLETED': 
+        return 'bg-blue-100 text-blue-800';
+      case 'CANCELLED': 
+        return 'bg-red-100 text-red-800';
+      case 'EXPIRED': 
+        return 'bg-gray-100 text-gray-800';
+      default: 
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // 获取优先级样式（扁平化）
+  const getPriorityStyle = (priority: string) => {
+    switch (priority) {
+      case 'urgent': 
+        return 'bg-red-500 text-white';
+      case 'high': 
+        return 'bg-orange-500 text-white';
+      case 'medium': 
+        return 'bg-yellow-500 text-white';
+      case 'low': 
+        return 'bg-green-500 text-white';
+      default: 
+        return 'bg-gray-500 text-white';
+    }
+  };
+
+  // 获取优先级边框颜色
+  const getPriorityBorderColor = (priority: string) => {
+    switch (priority) {
+      case 'urgent': return 'border-red-400';
+      case 'high': return 'border-orange-400';
+      case 'medium': return 'border-yellow-400';
+      case 'low': return 'border-green-400';
+      default: return 'border-gray-400';
+    }
+  };
+
   // 格式化预算显示
   const formatBudget = (budget: Job['budget']) => {
     if (typeof budget === 'number') {
@@ -234,435 +159,427 @@ const Jobs: React.FC = () => {
     return 'TBD';
   };
 
+  // 计算截止日期状态
+  const getDeadlineStatus = (deadline: string) => {
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+    const diffDays = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return { status: 'expired', text: '已过期', color: 'text-red-600' };
+    if (diffDays <= 3) return { status: 'urgent', text: `${diffDays}天`, color: 'text-red-500' };
+    if (diffDays <= 7) return { status: 'warning', text: `${diffDays}天`, color: 'text-orange-500' };
+    return { status: 'normal', text: `${diffDays}天`, color: 'text-green-600' };
+  };
+
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error" sx={{ mb: 2 }}>
-          加载失败: {error.message}
-        </Alert>
-        <Button variant="contained" onClick={() => refetch()}>
-          重试
-        </Button>
-      </Container>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-8 max-w-md w-full">
+          <Alert severity="error" className="mb-6">
+            加载失败: {error.message}
+          </Alert>
+          <Button 
+            variant="contained" 
+            onClick={() => refetch()}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            重试
+          </Button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ 
-      minHeight: 'calc(100vh - 140px)',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f5f7fa 100%)',
-      width: '100%',
-      margin: 0,
-      padding: 0
-    }}>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        {/* Hero Banner */}
-        <HeroBanner>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-            Aladdin Protocol Task Collaboration Hub
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, mb: 3 }}>
-            Post tasks and let AI Agents compete their efficiently
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              size="large"
-              startIcon={<Plus size={20} />}
-              component={Link}
-              to="new"
-              sx={{ 
-                bgcolor: '#4CAF50',
-                '&:hover': { bgcolor: '#45a049' },
-                borderRadius: 2,
-                px: 4
-              }}
-            >
-              New Job
-            </Button>
-          </Box>
-        </HeroBanner>
-
-        {/* 统计卡片 */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#666' }}>
-                  {statsData?.total || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Tasks
-                </Typography>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>
-                  {statsData?.open || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Open
-                </Typography>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#FF9800' }}>
-                  {statsData?.inProgress || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  In Progress
-                </Typography>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#2196F3' }}>
-                  {statsData?.completed || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Completed
-                </Typography>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-        </Grid>
-
-        {/* 筛选区域 */}
-        <FilterSection elevation={0}>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ 
-              color: '#333', 
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}>
-              <Filter size={20} />
-              Filter & Search
+    <div className="min-h-screen bg-gray-50">
+      {/* 顶部导航条 */}
+      <div className="w-full h-1 bg-blue-600"></div>
+      
+      <Container maxWidth="xl" className="py-8">
+        {/* Hero Section - 扁平化设计 */}
+        <div className="bg-blue-600 rounded-lg mb-8 overflow-hidden">
+          <div className="px-8 py-12 text-center text-white">
+            <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6">
+              <Zap size={16} className="mr-2" />
+              AI-Powered Task Platform
+            </div>
+            <Typography variant="h2" className="font-bold mb-4">
+              Protocol
             </Typography>
-          </Box>
-          <Divider sx={{ mb: 3, bgcolor: 'rgba(102, 126, 234, 0.2)' }} />
-          
-          <Grid container spacing={3} alignItems="end">
-            <Grid item xs={12} md={4}>
-              <StyledTextField
-                fullWidth
-                label="Search Jobs"
-                placeholder="Search by title, description, category..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <Search 
-                      size={20} 
-                      style={{ 
-                        color: 'rgba(102, 126, 234, 0.6)', 
-                        marginRight: 12 
-                      }} 
-                    />
-                  )
-                }}
-                variant="outlined"
-              />
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <StyledFormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={filters.status || ''}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
-                  label="Status"
-                >
-                  <MenuItem value="">All Status</MenuItem>
-                  <MenuItem value="OPEN">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4CAF50' }} />
-                      Open
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="IN_PROGRESS">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#FF9800' }} />
-                      In Progress
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="COMPLETED">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#2196F3' }} />
-                      Completed
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="CANCELLED">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f44336' }} />
-                      Cancelled
-                    </Box>
-                  </MenuItem>
-                </Select>
-              </StyledFormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <StyledFormControl fullWidth>
-                <InputLabel>Priority</InputLabel>
-                <Select
-                  value={filters.priority || ''}
-                  onChange={(e) => handleFilterChange('priority', e.target.value)}
-                  label="Priority"
-                >
-                  <MenuItem value="">All Priority</MenuItem>
-                  <MenuItem value="low">
-                    <Chip label="Low" size="small" color="default" />
-                  </MenuItem>
-                  <MenuItem value="medium">
-                    <Chip label="Medium" size="small" color="warning" />
-                  </MenuItem>
-                  <MenuItem value="high">
-                    <Chip label="High" size="small" color="error" />
-                  </MenuItem>
-                  <MenuItem value="urgent">
-                    <Chip label="Urgent" size="small" sx={{ bgcolor: '#FF5722', color: 'white' }} />
-                  </MenuItem>
-                </Select>
-              </StyledFormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <StyledFormControl fullWidth>
-                <InputLabel>Skill Level</InputLabel>
-                <Select
-                  value={filters.skillLevel || ''}
-                  onChange={(e) => handleFilterChange('skillLevel', e.target.value)}
-                  label="Skill Level"
-                >
-                  <MenuItem value="">All Levels</MenuItem>
-                  <MenuItem value="beginner">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <User size={16} />
-                      Beginner
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="intermediate">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <TrendingUp size={16} />
-                      Intermediate
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="advanced">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <TrendingUp size={16} />
-                      Advanced
-                    </Box>
-                  </MenuItem>
-                  <MenuItem value="expert">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <User size={16} />
-                      Expert
-                    </Box>
-                  </MenuItem>
-                </Select>
-              </StyledFormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <FilterButton
-                fullWidth
-                startIcon={<Filter size={20} />}
-                onClick={() => {
-                  setFilters({ page: 1, limit: 12 });
-                  setSearchTerm('');
-                }}
-                sx={{ height: '56px' }}
+            <Typography variant="h5" className="opacity-90 mb-8 max-w-2xl mx-auto">
+              智能任务协作中心 - 发布任务，让 AI Agent 高效竞标完成
+            </Typography>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <Button 
+                variant="contained" 
+                size="large"
+                startIcon={<Plus size={20} />}
+                component={Link}
+                to="new"
+                className="bg-white text-blue-600 hover:bg-gray-100 rounded-lg px-8 py-3 font-semibold"
               >
-                Reset Filters
-              </FilterButton>
+                发布新任务
+              </Button>
+              <Button 
+                variant="outlined" 
+                size="large"
+                startIcon={<TrendingUp size={20} />}
+                className="border-white/30 text-white hover:bg-white/10 rounded-lg px-8 py-3 font-semibold"
+              >
+                查看统计
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* 统计卡片区域 - 扁平化 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {[
+            { label: '总任务数', value: statsData?.total || 0, icon: Target, color: 'text-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' },
+            { label: '开放中', value: statsData?.open || 0, icon: Zap, color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-200' },
+            { label: '进行中', value: statsData?.inProgress || 0, icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200' },
+            { label: '已完成', value: statsData?.completed || 0, icon: Eye, color: 'text-purple-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200' }
+          ].map((stat, index) => (
+            <Card key={index} className={`bg-white border-2 ${stat.borderColor} rounded-lg hover:border-opacity-80 transition-colors duration-200`}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Typography variant="h3" className="font-bold text-gray-800 mb-1">
+                      {stat.value}
+                    </Typography>
+                    <Typography variant="body2" className="text-gray-600 font-medium">
+                      {stat.label}
+                    </Typography>
+                  </div>
+                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon size={24} className={stat.color} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* 筛选和搜索区域 - 扁平化 */}
+        <Card className="bg-white border border-gray-200 rounded-lg mb-8">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-blue-600 rounded-lg">
+                <Filter size={20} className="text-white" />
+              </div>
+              <Typography variant="h6" className="font-bold text-gray-800">
+                筛选与搜索
+              </Typography>
+            </div>
+            
+            <Grid container spacing={4} alignItems="end">
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="搜索任务"
+                  placeholder="按标题、描述、分类搜索..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="[&_.MuiOutlinedInput-root]:bg-white [&_.MuiOutlinedInput-root]:rounded-lg [&_.MuiOutlinedInput-root]:border-gray-300 [&_.MuiOutlinedInput-root:hover]:border-blue-400 [&_.MuiOutlinedInput-root.Mui-focused]:border-blue-600"
+                  InputProps={{
+                    startAdornment: (
+                      <Search size={20} className="text-gray-400 mr-3" />
+                    )
+                  }}
+                  variant="outlined"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth className="[&_.MuiOutlinedInput-root]:bg-white [&_.MuiOutlinedInput-root]:rounded-lg [&_.MuiOutlinedInput-root]:border-gray-300 [&_.MuiOutlinedInput-root:hover]:border-blue-400 [&_.MuiOutlinedInput-root.Mui-focused]:border-blue-600">
+                  <InputLabel>状态</InputLabel>
+                  <Select
+                    value={filters.status || ''}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    label="状态"
+                  >
+                    <MenuItem value="">全部状态</MenuItem>
+                    <MenuItem value="OPEN">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded bg-green-500" />
+                        开放中
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="IN_PROGRESS">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded bg-yellow-500" />
+                        进行中
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="COMPLETED">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded bg-blue-500" />
+                        已完成
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="CANCELLED">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded bg-red-500" />
+                        已取消
+                      </div>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth className="[&_.MuiOutlinedInput-root]:bg-white [&_.MuiOutlinedInput-root]:rounded-lg [&_.MuiOutlinedInput-root]:border-gray-300 [&_.MuiOutlinedInput-root:hover]:border-blue-400 [&_.MuiOutlinedInput-root.Mui-focused]:border-blue-600">
+                  <InputLabel>优先级</InputLabel>
+                  <Select
+                    value={filters.priority || ''}
+                    onChange={(e) => handleFilterChange('priority', e.target.value)}
+                    label="优先级"
+                  >
+                    <MenuItem value="">全部优先级</MenuItem>
+                    <MenuItem value="low">
+                      <Chip label="低" size="small" className="bg-green-100 text-green-800" />
+                    </MenuItem>
+                    <MenuItem value="medium">
+                      <Chip label="中" size="small" className="bg-yellow-100 text-yellow-800" />
+                    </MenuItem>
+                    <MenuItem value="high">
+                      <Chip label="高" size="small" className="bg-orange-100 text-orange-800" />
+                    </MenuItem>
+                    <MenuItem value="urgent">
+                      <Chip label="紧急" size="small" className="bg-red-100 text-red-800" />
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              
+              <Grid item xs={12} md={2}>
+                <FormControl fullWidth className="[&_.MuiOutlinedInput-root]:bg-white [&_.MuiOutlinedInput-root]:rounded-lg [&_.MuiOutlinedInput-root]:border-gray-300 [&_.MuiOutlinedInput-root:hover]:border-blue-400 [&_.MuiOutlinedInput-root.Mui-focused]:border-blue-600">
+                  <InputLabel>技能等级</InputLabel>
+                  <Select
+                    value={filters.skillLevel || ''}
+                    onChange={(e) => handleFilterChange('skillLevel', e.target.value)}
+                    label="技能等级"
+                  >
+                    <MenuItem value="">全部等级</MenuItem>
+                    <MenuItem value="beginner">
+                      <div className="flex items-center gap-2">
+                        <User size={16} />
+                        初级
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="intermediate">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp size={16} />
+                        中级
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="advanced">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp size={16} />
+                        高级
+                      </div>
+                    </MenuItem>
+                    <MenuItem value="expert">
+                      <div className="flex items-center gap-2">
+                        <User size={16} />
+                        专家
+                      </div>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              
+              <Grid item xs={12} md={2}>
+                <Button
+                  fullWidth
+                  startIcon={<Filter size={20} />}
+                  onClick={() => {
+                    setFilters({ page: 1, limit: 12 });
+                    setSearchTerm('');
+                  }}
+                  className="h-14 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold"
+                >
+                  重置筛选
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </FilterSection>
+          </CardContent>
+        </Card>
 
-        {/* Jobs列表 */}
-        <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold', color: '#333' }}>
-          Jobs List
-        </Typography>
+        {/* 任务列表标题 */}
+        <div className="flex items-center justify-between mb-6">
+          <Typography variant="h5" className="font-bold text-gray-800">
+            任务列表 ({filteredJobs.length})
+          </Typography>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="w-2 h-2 rounded bg-green-500"></div>
+            <span>实时更新</span>
+          </div>
+        </div>
 
+        {/* 任务卡片列表 - 扁平化设计 */}
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress size={60} />
-          </Box>
+          <div className="flex justify-center items-center py-20">
+            <div className="text-center">
+              <CircularProgress size={60} className="mb-4" />
+              <Typography variant="h6" className="text-gray-600">
+                正在加载任务...
+              </Typography>
+            </div>
+          </div>
         ) : (
           <>
-            <Grid className="!grid grid-cols-2 gap-4" container spacing={3}>
-              {filteredJobs.map((job) => (
-                <Grid item xs={12} md={6} key={job.id} sx={{ display: 'flex' }}>
-                  <JobCard sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', flex: 1 }}>
-                          {job.jobTitle}
-                        </Typography>
-                        <Chip 
-                          label={job.status} 
-                          color={getStatusColor(job.status) as any}
-                          size="small"
-                          sx={{ ml: 1 }}
-                        />
-                      </Box>
-                      
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {job.description.length > 100 
-                          ? `${job.description.substring(0, 100)}...` 
-                          : job.description
-                        }
-                      </Typography>
-                      
-                      <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {filteredJobs.map((job) => {
+                const deadlineStatus = getDeadlineStatus(job.deadline);
+                return (
+                  <Card key={job.id} className={`group bg-white border-l-4 ${getPriorityBorderColor(job.priority)} border-r border-t border-b border-gray-200 rounded-lg hover:border-gray-300 transition-colors duration-200`}>
+                    <CardContent className="p-6">
+                      {/* 标题和状态 */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 pr-4">
+                          <Typography variant="h6" className="font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+                            {job.jobTitle}
+                          </Typography>
+                          <Typography variant="body2" className="text-gray-600 leading-relaxed">
+                            {job.description.length > 120 ? `${job.description.substring(0, 120)}...` : job.description}
+                          </Typography>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <Chip 
+                            label={job.status === 'OPEN' ? '开放中' : job.status === 'IN_PROGRESS' ? '进行中' : job.status === 'COMPLETED' ? '已完成' : job.status === 'CANCELLED' ? '已取消' : '已过期'}
+                            size="small"
+                            className={`${getStatusStyle(job.status)} font-medium`}
+                          />
+                          <Tooltip title="更多操作">
+                            <IconButton size="small" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <MoreVertical size={16} />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+                      </div>
+
+                      {/* 标签区域 */}
+                      <div className="flex flex-wrap gap-2 mb-4">
                         <Chip 
                           label={job.category} 
                           size="small" 
-                          sx={{ 
-                            bgcolor: 'rgba(102, 126, 234, 0.1)', 
-                            color: '#667eea',
-                            border: '1px solid rgba(102, 126, 234, 0.3)',
-                            fontWeight: 500
-                          }} 
+                          className="bg-blue-50 text-blue-700 font-medium"
                         />
                         <Chip 
-                          label={job.skillLevel} 
+                          label={job.skillLevel === 'beginner' ? '初级' : job.skillLevel === 'intermediate' ? '中级' : job.skillLevel === 'advanced' ? '高级' : '专家'} 
                           size="small" 
-                          sx={{ 
-                            bgcolor: 'rgba(118, 75, 162, 0.1)', 
-                            color: '#764ba2',
-                            border: '1px solid rgba(118, 75, 162, 0.3)',
-                            fontWeight: 500
-                          }} 
+                          className="bg-purple-50 text-purple-700 font-medium"
                         />
                         <Chip 
-                          label={job.priority} 
+                          label={job.priority === 'low' ? '低优先级' : job.priority === 'medium' ? '中优先级' : job.priority === 'high' ? '高优先级' : '紧急'}
                           size="small" 
-                          sx={{ 
-                            bgcolor: job.priority === 'high' ? 'rgba(244, 67, 54, 0.1)' : 
-                                    job.priority === 'medium' ? 'rgba(255, 152, 0, 0.1)' : 
-                                    'rgba(76, 175, 80, 0.1)',
-                            color: job.priority === 'high' ? '#f44336' : 
-                                   job.priority === 'medium' ? '#FF9800' : 
-                                   '#4CAF50',
-                            border: `1px solid ${job.priority === 'high' ? 'rgba(244, 67, 54, 0.3)' : 
-                                    job.priority === 'medium' ? 'rgba(255, 152, 0, 0.3)' : 
-                                    'rgba(76, 175, 80, 0.3)'}`,
-                            fontWeight: 500
-                          }} 
+                          className={`${getPriorityStyle(job.priority)} font-medium`}
                         />
-                        <Chip 
-                          label={new Date(job.deadline).toLocaleDateString()} 
-                          size="small" 
-                          icon={<Calendar size={14} />}
-                          sx={{ 
-                            bgcolor: 'rgba(96, 125, 139, 0.1)', 
-                            color: '#607D8B',
-                            border: '1px solid rgba(96, 125, 139, 0.3)',
-                            fontWeight: 500
-                          }} 
-                        />
-                      </Stack>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <DollarSign size={16} style={{ color: '#4CAF50' }} />
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>
-                            {formatBudget(job.budget)}
-                          </Typography>
-                        </Box>
-                        <Stack direction="row" spacing={1}>
-                          <Button 
-                            size="small" 
-                            variant="outlined" 
-                            component={Link} 
-                            to={`${job.id}`}
-                            sx={{
-                              borderColor: '#667eea',
-                              color: '#667eea',
-                              '&:hover': {
-                                borderColor: '#5a6fd8',
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)'
-                              }
-                            }}
-                          >
-                            View Details
-                          </Button>
-                          <Button 
-                            size="small" 
-                            variant="contained" 
-                            component={Link} 
-                            to={`${job.id}/edit`}
-                            sx={{
-                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                              '&:hover': {
-                                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                              }
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </Stack>
-                      </Box>
+                      </div>
+
+                      {/* 底部信息 */}
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <DollarSign size={16} className="text-green-600" />
+                            <Typography variant="h6" className="font-bold text-green-600">
+                              {formatBudget(job.budget)}
+                            </Typography>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar size={16} className={deadlineStatus.color} />
+                            <Typography variant="body2" className={`font-medium ${deadlineStatus.color}`}>
+                              剩余 {deadlineStatus.text}
+                            </Typography>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          <Tooltip title="查看详情">
+                            <Button 
+                              size="small" 
+                              variant="outlined" 
+                              component={Link} 
+                              to={`${job.id}`}
+                              className="border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50 rounded-lg min-w-0 px-3"
+                            >
+                              <Eye size={16} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="编辑任务">
+                            <Button 
+                              size="small" 
+                              variant="contained" 
+                              component={Link} 
+                              to={`${job.id}/edit`}
+                              className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg min-w-0 px-3"
+                            >
+                              <Edit3 size={16} />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      </div>
                     </CardContent>
-                  </JobCard>
-                </Grid>
-              ))}
-            </Grid>
+                  </Card>
+                );
+              })}
+            </div>
 
-            {/* 结果统计 */}
-            <Box sx={{ mt: 4, mb: 2, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
-                显示 {filteredJobs.length} 个结果 {jobsData?.total && `/ 共 ${jobsData.total} 个`}
-              </Typography>
-            </Box>
+            {/* 空状态 */}
+            {filteredJobs.length === 0 && (
+              <div className="text-center py-20">
+                <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+                  <Search size={32} className="text-gray-400" />
+                </div>
+                <Typography variant="h6" className="text-gray-600 mb-2">
+                  暂无匹配的任务
+                </Typography>
+                <Typography variant="body2" className="text-gray-500 mb-6">
+                  尝试调整筛选条件或发布新任务
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  startIcon={<Plus size={20} />}
+                  component={Link}
+                  to="new"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-3"
+                >
+                  发布新任务
+                </Button>
+              </div>
+            )}
 
-            {/* 分页 */}
-            {jobsData && jobsData.totalPages > 1 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Pagination 
-                  count={jobsData.totalPages} 
-                  page={filters.page || 1} 
-                  onChange={handlePageChange} 
-                  color="primary"
-                  size="large"
-                  sx={{
-                    '& .MuiPaginationItem-root': {
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(102, 126, 234, 0.2)',
-                      '&:hover': {
-                        background: 'rgba(102, 126, 234, 0.1)',
-                        borderColor: '#667eea'
-                      },
-                      '&.Mui-selected': {
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
-                        }
-                      }
-                    }
-                  }}
-                />
-              </Box>
+            {/* 底部统计和分页 */}
+            {filteredJobs.length > 0 && (
+              <div className="mt-8">
+                {/* 结果统计 */}
+                <div className="text-center mb-6">
+                  <Typography variant="body2" className="text-gray-600 bg-white border border-gray-200 inline-block px-4 py-2 rounded-lg">
+                    显示 {filteredJobs.length} 个结果 {jobsData?.total && `/ 共 ${jobsData.total} 个任务`}
+                  </Typography>
+                </div>
+
+                {/* 分页 */}
+                {jobsData && jobsData.totalPages > 1 && (
+                  <div className="flex justify-center">
+                    <Pagination 
+                      count={jobsData.totalPages} 
+                      page={filters.page || 1} 
+                      onChange={handlePageChange} 
+                      color="primary"
+                      size="large"
+                      className="[&_.MuiPaginationItem-root]:bg-white [&_.MuiPaginationItem-root]:border [&_.MuiPaginationItem-root]:border-gray-300 [&_.MuiPaginationItem-root]:rounded-lg [&_.MuiPaginationItem-root:hover]:bg-blue-50 [&_.MuiPaginationItem-root:hover]:border-blue-400 [&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 [&_.MuiPaginationItem-root.Mui-selected]:text-white [&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 [&_.MuiPaginationItem-root.Mui-selected:hover]:bg-blue-700 [&_.MuiPaginationItem-root]:transition-colors [&_.MuiPaginationItem-root]:duration-200"
+                    />
+                  </div>
+                )}
+              </div>
             )}
           </>
         )}
       </Container>
-    </Box>
+    </div>
   );
 };
 
-export default Jobs; 
+export default Jobs;
