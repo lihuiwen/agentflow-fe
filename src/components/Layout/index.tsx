@@ -85,7 +85,12 @@ const Layout: React.FC = () => {
         </nav>
       </header>
 
-      <main className="min-h-[calc(100vh-140px)] max-w-6xl mx-auto px-4 py-8">
+      <main style={{ 
+        minHeight: 'calc(100vh - 140px)', 
+        padding: 0, 
+        margin: 0,
+        width: '100%'
+      }}>
         <Outlet />
       </main>
 

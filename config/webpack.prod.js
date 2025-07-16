@@ -25,7 +25,7 @@ const createThirdpartyChunk = (chunkName, thirdPartyLibs) => ({
 const prodClient = (env) => {
   const isTest = /^test/.test(env.goal);
 
-  return merge(baseConfig.clent(env), {
+  return merge(baseConfig.client(env), {
     mode,
     devtool: isTest ? "eval-source-map" : false,
     output: {

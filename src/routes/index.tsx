@@ -5,6 +5,8 @@ import { PrefetchKeys } from "@apis/queryKeys";
 import HomeService from "@apis/services/Home";
 import RequestDemoService from "@apis/services/RequestDemo";
 import RequestDemoPage from "@pages/RequestDemo";
+import JobService from "@apis/services/Job";
+import CategoryService from "@apis/services/Category";
 
 // 懒加载页面组件
 const Home = loadable(/* #__LOADABLE__ */ () => import("@pages/Home"), null);
@@ -116,18 +118,37 @@ const routes: PreFetchRouteObject[] = [
           {
             index: true,
             element: <Jobs />,
+            queryKey: [PrefetchKeys.JOBS],
+            loadData: () => JobService.getJobs({ page: 1, limit: 12 }),
           },
           {
             path: "new",
             element: <JobForm />,
+            queryKey: [PrefetchKeys.CATEGORIES],
+            loadData: () => CategoryService.getCategories(),
           },
           {
             path: ":id",
             element: <JobDetail />,
+            queryKey: [PrefetchKeys.JOB_DETAIL],
+            loadData: ({ params, id }) => {
+              return JobService.getJobById(id);
+            },
           },
           {
             path: ":id/edit",
             element: <JobForm />,
+            queryKey: [PrefetchKeys.JOB_DETAIL, PrefetchKeys.CATEGORIES],
+            loadData: async ({ params }) => {
+              if (!params || !params.id) {
+                throw new Error('Job ID is required');
+              }
+              const [jobData, categories] = await Promise.all([
+                JobService.getJobById(params.id),
+                CategoryService.getCategories()
+              ]);
+              return { jobData, categories };
+            },
           },
         ],
       },

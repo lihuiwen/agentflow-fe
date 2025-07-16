@@ -179,7 +179,7 @@ const baseClientConfig = (env) => {
 };
 
 module.exports = {
-  clent: baseClientConfig,
+  client: baseClientConfig,
   server: (env) =>
     merge(common, {
       name: `server:${name}`,
