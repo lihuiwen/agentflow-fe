@@ -33,3 +33,5 @@ cdk.out
 
 /cypress/screenshots
 /cypress/videos
+
+.claude/

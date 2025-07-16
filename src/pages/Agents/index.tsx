@@ -94,7 +94,7 @@ const Agents = () => {
       <div
         data-testid="agent-card"
         onClick={() => openDetail(agent)}
-        className="bg-blue-500/10 border-blue-500/20 w-1/3 border-2 rounded-2xl p-2 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-blue-500/15"
+        className="bg-blue-500/10 border-blue-500/20 w-74 border-2 rounded-2xl p-2 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-blue-500/15"
       >
         {/* 头部信息 */}
         <div className="flex items-start justify-between mb-3">
@@ -187,7 +187,7 @@ const Agents = () => {
       </div>
 
       {/* 按行显示代理卡片 */}
-      <div className="w-full mb-8 flex justify-around gap-4">
+      <div className="w-full mb-8 flex justify-start flex-wrap gap-4">
         {agents &&
           agents.map((agent) => (
             <AgentCard key={agent.id} agent={agent} />
