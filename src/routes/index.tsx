@@ -17,9 +17,9 @@ const AgentDetail = loadable(/* #__LOADABLE__ */ () => import("@pages/Agents/Age
 const AgentForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Agents/AgentForm"), null);
 
 // Job相关页面  
-const Jobs = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs"), null);
-const JobDetail = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/JobDetail"), null);
-const JobForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/JobForm"), null);
+const Jobs = loadable(/* #__LOADABLE__ */ () => import("@/pages/Jobs/ListPage"), null);
+const JobDetail = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/DetailPage/JobDetail"), null);
+const JobForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/CreatePage/JobForm"), null);
 
 // Emotion缓存测试页面
 const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("@pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
