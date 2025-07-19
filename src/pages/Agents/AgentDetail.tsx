@@ -31,7 +31,7 @@ const AgentDetail: React.FC<AgentDetailsProps> = ({
       <div className="relative bg-white rounded-xl shadow-xl w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center p-6 pb-4 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900">Agent Details</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Agent 详情</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -104,31 +104,31 @@ const AgentDetail: React.FC<AgentDetailsProps> = ({
           </div>
 
           {/* Pricing */}
-          {/* <div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-3">Pricing Model</h4>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">价格模型</h4>
             
             <div className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <span className="text-green-600 font-bold text-xs">FREE</span>
+                  <span className="text-green-600 font-bold text-xs">{agent.isFree ? '免费' : '收费'}</span>
                 </div>
                 <div>
-                  <h5 className="font-semibold text-gray-900">Free to Use</h5>
+                  <h5 className="font-semibold text-gray-900">{agent.isFree ? '免费使用' : `收费使用（${agent.price}$）`}</h5>
                   <p className="text-sm text-gray-500">
-                    {agent.pricing.description}
+                    {agent.description}
                   </p>
                 </div>
               </div>
               
-              <div className="text-3xl font-bold text-green-600 mb-4">
+              {/* <div className="text-3xl font-bold text-green-600 mb-4">
                 Free
-              </div>
+              </div> */}
               
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-1 rounded-lg transition-colors">
-                Use for Free
-              </button>
+              {/* <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-1 rounded-lg transition-colors">
+                开始使用
+              </button> */}
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Footer */}
@@ -137,10 +137,10 @@ const AgentDetail: React.FC<AgentDetailsProps> = ({
             onClick={onClose}
             className="px-4 py-1 text-gray-600 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
-            Use for Free
+            开始使用
           </button>
         </div>
       </div>

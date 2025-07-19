@@ -33,7 +33,8 @@ function AgentForm() {
     agentAddress: '',
     description: '',
     authorBio: '',
-    // isFree: true,
+    isFree: true,
+    price: undefined,
     walletAddress: '',
   });
 
@@ -42,7 +43,7 @@ function AgentForm() {
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
 
   const navigate = useNavigate();
-  
+
   // 页面初始化执行内容
   useEffect(() => {
     getCategoryList();
@@ -118,6 +119,9 @@ function AgentForm() {
   const handleSubmit = async () => {
     if (validateForm()) {
       setLoading(true);
+      if(formData.price) {
+        formData.price = parseFloat(formData.price.toString());
+      }
       const response = await fetch('http://localhost:8088/agents', {
         method: 'POST',
         headers: {
@@ -125,7 +129,7 @@ function AgentForm() {
         },
         body: JSON.stringify(formData),
       });
-      if(response) {
+      if (response) {
         // 跳转到列表页
         navigate('/agents');
       }
@@ -142,7 +146,8 @@ function AgentForm() {
       agentAddress: '',
       description: '',
       authorBio: '',
-      // isFree: true,
+      isFree: true,
+      price: undefined,
       walletAddress: '',
     });
     setErrors({});
@@ -448,7 +453,7 @@ function AgentForm() {
           </Grid>
 
           {/* Is Free */}
-          {/* <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'center' }}>
+          <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'center' }}>
             <Grid size={{ xs: 12, md: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: { md: 'flex-end' } }}>
                 <Typography variant="body2" fontWeight="500">
@@ -461,7 +466,7 @@ function AgentForm() {
                 </Tooltip>
               </Box>
             </Grid>
-             <Grid size={{ xs: 12, md: 9 }}>
+            <Grid size={{ xs: 12, md: 9 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -473,8 +478,39 @@ function AgentForm() {
                 }
                 label={<Typography variant="body2">Free to use</Typography>}
               />
-            </Grid> 
-          </Grid>*/}
+            </Grid>
+          </Grid>
+
+          {/* Agent Price */}
+          {formData.isFree ? (
+            ''
+          ) : (
+            <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'flex-start' }}>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: { md: 'flex-end' }, mt: 1 }}>
+                  <Typography variant="body2" fontWeight="500">
+                    Agent Price
+                  </Typography>
+                  <Tooltip title="The HTTPS URL where your agent can be accessed">
+                    <IconButton size="small">
+                      <HelpCircle size={14} />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 9 }}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={formData.price}
+                  onChange={(e) => handleInputChange('price', e.target.value)}
+                  placeholder="Enter Agent Price"
+                  variant="outlined"
+                />
+              </Grid>
+            </Grid>
+          )}
         </Box>
 
         {/* Form Actions */}

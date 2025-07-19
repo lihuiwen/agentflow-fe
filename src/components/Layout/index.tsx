@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import NavigationDropdown from "./NavigationDropdown";
 import { menuCategories } from "../../config/navigation";
-import ConnectWallet from "../ConnectWallet";
+import Wallets from "../common/Wallets";
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -33,7 +33,7 @@ const Layout: React.FC = () => {
       <header className="bg-gray-800 text-white py-4 shadow-md">
         <nav className="max-w-6xl mx-auto px-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold m-0">AgentFlow</h1>
-          <ul className="flex list-none m-0 p-0 gap-8">
+          <ul className="flex items-center list-none m-0 p-0 gap-8">
             <NavigationDropdown
               trigger={
                 <span className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
@@ -79,17 +79,14 @@ const Layout: React.FC = () => {
               </Link>
             </li>
             <li>
-              <ConnectWallet />
+              <Wallets />
             </li>
           </ul>
         </nav>
       </header>
 
-      <main style={{ 
+      <main className="p-4" style={{ 
         minHeight: 'calc(100vh - 140px)', 
-        padding: 0, 
-        margin: 0,
-        width: '100%'
       }}>
         <Outlet />
       </main>

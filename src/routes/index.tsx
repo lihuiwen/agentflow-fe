@@ -38,14 +38,14 @@ const NotFound = () => (
 import { menuCategories } from "../config/navigation";
 // 静态导入所有组件
 const NativeEthereum = loadable(
-  () => import("@pages/native-ethereum/page"),
+  () => import("@pages/Wallets/native-ethereum/page"),
   null
 );
 const NativeEthereumJs = loadable(
-  () => import("@pages/native-ethereum-js/page"),
+  () => import("@/pages/Wallets/native-ethereum-js/page"),
   null
 );
-const EthersJs = loadable(() => import("@pages/ethers-js/page"), null);
+const EthersJs = loadable(() => import("@pages/Wallets/ethers-js/page"), null);
 // ... 其他组件
 
 // 创建路径到组件的映射

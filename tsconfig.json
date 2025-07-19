@@ -26,7 +26,8 @@
       "@components/*": ["src/components/*"],
       "@store/*": ["src/store/*"],
       "@apis/*": ["src/apis/*"],
-      "@types/*": ["src/types/*"]
+      "@types/*": ["src/types/*"],
+      "@config/*": ["src/config/*"]
     }
   },
   "types": ["node"],

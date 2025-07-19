@@ -2,10 +2,14 @@ import { hydrateRoot, createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { loadableReady } from '@loadable/component';
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from 'index';
+import App from '@/index';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import createEmotionCache from '../utils/emotionCache';
 import { CacheProvider } from '@emotion/react';
+
+import { WagmiProvider } from 'wagmi'
+
+import { config } from '@config/wagmi.config';
 
 interface TradeFlagType {
   isSSR: boolean;
@@ -32,14 +36,16 @@ const tradeFlag: TradeFlagType = JSON.parse(document.querySelector('#__APP_FLAG_
 const ClientApp = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={JSON.parse(dehydratedState)}>
-        <CacheProvider value={emotionCache}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
-        </CacheProvider>
-      </Hydrate>
+      {/* <WagmiProvider config={config}> */}
+        <Hydrate state={JSON.parse(dehydratedState)}>
+          <CacheProvider value={emotionCache}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </CacheProvider>
+        </Hydrate>
+      {/* </WagmiProvider> */}
     </QueryClientProvider>
   </BrowserRouter>
 );

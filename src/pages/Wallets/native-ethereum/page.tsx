@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import Button from "../../components/Button";
+import Button from "@components/Button";
 // 定义以太坊请求方法的类型
 // 这些是 MetaMask 支持的主要方法
 type EthereumMethod =

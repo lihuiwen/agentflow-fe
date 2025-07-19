@@ -4,6 +4,9 @@ import { HelmetProvider, FilledContext } from 'react-helmet-async';
 import routes from './routes';
 import { KoaProvider } from '@app/utils/KoaContext';
 import { Context } from 'koa';
+import { WagmiProvider } from 'wagmi'
+
+import { config } from './config/wagmi.config';
 
 import 'apis/index';
 import 'theme/index.less';
@@ -21,7 +24,9 @@ const App = (props: AppProps) => {
   return (
     <HelmetProvider context={helmetContext}>
       <KoaProvider value={props?.context}>
-        <Suspense>{renderRoutes}</Suspense>
+        <WagmiProvider config={config}>
+          <Suspense>{renderRoutes}</Suspense>
+        </WagmiProvider>
       </KoaProvider>
     </HelmetProvider>
   );

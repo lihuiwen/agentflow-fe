@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
-import ConnectWallet from "../../components/ConnectWallet";
-import Button from "../../components/Button";
+import ConnectWallet from "@components/ConnectWallet";
+import Button from "@components/Button";
 
 // 生成登录消息
 function generateLoginMessage() {
