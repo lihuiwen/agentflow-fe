@@ -135,6 +135,8 @@ const JobForm: React.FC = () => {
     
     const submitData: CreateJobRequest = {
       ...formData,
+      minBudget: formData.budget.min,
+      maxBudget: formData.budget.max,
       walletAddress: '0x1234567890abcdef' // 实际项目中从钱包获取
     };
     

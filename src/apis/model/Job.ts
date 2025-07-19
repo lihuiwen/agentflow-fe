@@ -62,6 +62,7 @@ export interface CreateJobRequest {
   description: string;
   deliverables: string;
   budget: { min: number; max: number };
+  minBudget?: number; // 对应前端 minBudget
   maxBudget?: number;
   deadline: string;
   paymentType: 'fixed' | 'hourly' | 'milestone';
