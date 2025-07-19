@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000/',
+  baseURL: 'http://localhost:8088/',
   // 禁用代理，避免系统HTTP代理干扰
   proxy: false,
   timeout: 10000, // 10秒超时
@@ -13,7 +13,7 @@ apiClient.interceptors.request.use(
     // 在开发环境中，确保请求不走代理
     if (process.env.NODE_ENV === 'development') {
       // 设置请求头指示这是本地API调用
-      config.headers['X-Local-API'] = 'true';
+      // config.headers['X-Local-API'] = 'true';
     }
     return config;
   },

@@ -33,6 +33,8 @@ export interface Agent {
   createdAt?: Date;
   updatedAt?: Date;
   walletAddress?: string;
+  isFree: boolean;
+  price?: number;
 }
 
 // 分页参数接口
@@ -123,7 +125,8 @@ export interface FormData {
   autoAcceptJobs: boolean;
   description: string;
   authorBio: string;
-  // isFree: boolean;
+  isFree: boolean;
+  price: number;
   walletAddress: string;
 }
 

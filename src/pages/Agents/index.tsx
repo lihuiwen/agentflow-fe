@@ -22,6 +22,8 @@ import AgentDetail from './AgentDetail';
 import { useQuery } from '@tanstack/react-query';
 import { PrefetchKeys } from '@/apis/queryKeys';
 import AgentService from '@/apis/services/Agent';
+import { injected, useConnect } from 'wagmi';
+import { useChainStore, useUserStore } from '@/store';
 
 // 图标映射
 const iconMap = {
@@ -41,7 +43,11 @@ const Agents = () => {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState(false);
-  const [currentAgent, setCurrentAgent] = useState<Agent>({})
+  const [currentAgent, setCurrentAgent] = useState<Agent>()
+  const address = useUserStore((state) => state.address);
+
+  // 获取 store
+  const isLinking: boolean = useChainStore((state: { isLinking: boolean }) => state.isLinking)
   // 获取 agents 列表
   const { data: agentRes } = useQuery({
     queryKey: [PrefetchKeys.AGENTS, currentPage, pageSize],
@@ -70,8 +76,13 @@ const Agents = () => {
   };
 
   const handleAdd = () => {
-    // 跳转到新增页面
-    navigate('/agents/new');
+    // 判断钱包是否链接
+    if (!address) {
+      navigate('/agents/new');
+    } else {
+      // 跳转到新增页面
+      navigate('/agents/new');
+    }
   };
 
   const handleKeyPress = (event) => {
@@ -82,21 +93,6 @@ const Agents = () => {
 
   // 详情弹窗
   const openDetail = (agent: Agent) => {
-    const currentAgent: IAgentDetail = {
-      id: '1',
-      name: 'zhijia加密',
-      avatar: '',
-      rating: 0,
-      reviewCount: 1,
-      description: '可以预测市价的作者可以预测市价的作者',
-      contractType: 'Result-based Contract',
-      tags: ['测试tag', '测试tag2'],
-      pricing: {
-        type: 'free',
-        description: 'No payment required, use directly',
-      },
-      badge: 'Marketing Expert',
-    };
     setCurrentAgent(agent);
     setOpen(true);
   }
@@ -109,7 +105,7 @@ const Agents = () => {
       <div
         data-testid="agent-card"
         onClick={() => openDetail(agent)}
-        className="bg-blue-500/10 border-blue-500/20 w-1/3 border-2 rounded-2xl p-2 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-blue-500/15"
+        className="bg-blue-500/10 border-blue-500/20 w-74 border-2 rounded-2xl p-2 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-blue-500/15"
       >
         {/* 头部信息 */}
         <div className="flex items-start justify-between mb-3">
@@ -146,13 +142,11 @@ const Agents = () => {
         {/* 底部信息 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* {agent.isFree ? <span className="text-xl font-bold text-gray-900">{agent.price}</span> : ''} */}
-            {/* <span className="text-xs text-gray-500">{agent.isFree ? '免费使用' : 'USDT/月'}</span> */}
-            <span className="text-xs text-gray-500">免费使用</span>
+            {agent.isFree ? '' : <span className="text-xl font-bold text-gray-900">{agent.price}</span>}
+            <span className="text-xs text-gray-500">{agent.isFree ? '免费使用' : 'USDT/月'}</span>
           </div>
           <div className="flex items-center gap-2">
-            {/* <span className="text-xs text-gray-500">{agent.isFree ? '免费使用' : '固定通用收费'}</span> */}
-            <span className="text-xs text-gray-500">免费使用</span>
+            <span className="text-xs text-gray-500">{agent.isFree ? '免费使用' : '固定通用收费'}</span>
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-xs text-gray-600">合约</span>
@@ -202,7 +196,7 @@ const Agents = () => {
       </div>
 
       {/* 按行显示代理卡片 */}
-      <div className="w-full mb-8 flex justify-around gap-4">
+      <div className="w-full mb-8 flex justify-start flex-wrap gap-4">
         {agents &&
           agents.map((agent) => (
             <AgentCard key={agent.id} agent={agent} />

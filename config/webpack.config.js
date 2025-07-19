@@ -72,6 +72,7 @@ const common = {
       "@store": resolve("src/store"),
       "@apis": resolve("src/apis"),
       "@types": resolve("src/types"),
+      "@config": resolve("src/config"),
     },
     extensions: [".js", ".ts", ".tsx", ".jsx"],
     plugins: [
