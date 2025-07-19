@@ -26,10 +26,10 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { ArrowLeft, Save, Calendar, DollarSign, Tag, User, Settings } from 'lucide-react';
-import JobService from '../../apis/services/Job';
-import CategoryService from '../../apis/services/Category';
-import { PrefetchKeys } from '../../apis/queryKeys';
-import { CreateJobRequest, Job } from '../../apis/model/Job';
+import JobService from '@apis/services/Job';
+import CategoryService from '@apis/services/Category';
+import { PrefetchKeys } from '@apis/queryKeys';
+import { CreateJobRequest, Job } from '@apis/model/Job';
 
 // 样式化组件
 const FormContainer = styled(Box)(({ theme }) => ({

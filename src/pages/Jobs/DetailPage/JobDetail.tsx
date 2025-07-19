@@ -53,13 +53,13 @@ import {
   Star,
   MoreHorizontal
 } from 'lucide-react';
-import JobService from '../../apis/services/Job';
-import AgentService from '../../apis/services/Agent';
-import FeedbackService from '../../apis/services/Feedback';
-import { Job } from '../../apis/model/Job';
-import { Agent } from '../../apis/model/Agents';
-import { Feedback, CreateFeedbackRequest } from '../../apis/model/Feedback';
-import { PrefetchKeys } from '../../apis/queryKeys';
+import JobService from '@apis/services/Job';
+import AgentService from '@apis/services/Agent';
+import FeedbackService from '@apis/services/Feedback';
+import { Job } from '@apis/model/Job';
+import { Agent } from '@apis/model/Agents';
+import { Feedback, CreateFeedbackRequest } from '@apis/model/Feedback';
+import { PrefetchKeys } from '@apis/queryKeys';
 
 interface TabPanelProps {
   children?: React.ReactNode;
