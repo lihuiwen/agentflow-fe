@@ -141,13 +141,23 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
   } = useWriteContract();
 
   // 等待交易确认
-  const { isLoading: isApproveConfirming, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({
+  const { isLoading: isApproveConfirmingRaw, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({
     hash: approveHash,
+    query: {
+      enabled: !!approveHash,
+    }
   });
 
-  const { isLoading: isStakeConfirming, isSuccess: isStakeSuccess } = useWaitForTransactionReceipt({
+  const { isLoading: isStakeConfirmingRaw, isSuccess: isStakeSuccess } = useWaitForTransactionReceipt({
     hash: stakeHash,
+    query: {
+      enabled: !!stakeHash,
+    }
   });
+
+  // 手动控制确认状态，避免在没有交易哈希时显示加载中
+  const isApproveConfirming = approveHash && isApproveConfirmingRaw;
+  const isStakeConfirming = stakeHash && isStakeConfirmingRaw;
 
   // 处理授权成功
   useEffect(() => {
