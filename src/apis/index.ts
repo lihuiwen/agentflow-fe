@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8088/',
+  baseURL: 'http://localhost:3000/',
   // 禁用代理，避免系统HTTP代理干扰
   proxy: false,
   timeout: 10000, // 10秒超时

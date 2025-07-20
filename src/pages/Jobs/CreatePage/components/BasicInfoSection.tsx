@@ -8,7 +8,8 @@ import {
   Box
 } from '@mui/material';
 import { Tag, FileText, Target, Settings } from 'lucide-react';
-import { SectionCard, StyledTextField, StyledFormControl } from '../styles';
+import { styles } from '../styles';
+import { TextField, FormControl } from '@mui/material';
 import { FormSectionProps, Category } from '../types';
 
 interface BasicInfoSectionProps extends FormSectionProps {
@@ -59,13 +60,14 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 <span className="text-red-500 text-sm">*</span>
               </div>
               <div className="relative">
-                <StyledTextField
+                <TextField
                   fullWidth
                   placeholder="请输入任务标题，如：开发一个 AI 聊天机器人"
                   value={formData.jobTitle}
                   onChange={(e) => onInputChange('jobTitle', e.target.value)}
                   error={!!errors.jobTitle}
                   helperText={errors.jobTitle}
+                  className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -100,9 +102,10 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledFormControl 
+              <FormControl 
                 fullWidth 
                 error={!!errors.category}
+                className={`${styles.formControl.root} ${styles.formControl.inputHover} ${styles.formControl.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -168,7 +171,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                     {errors.category}
                   </Typography>
                 )}
-              </StyledFormControl>
+              </FormControl>
             </div>
           </Grid>
 
@@ -180,8 +183,9 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                   技能等级
                 </Typography>
               </div>
-              <StyledFormControl 
+              <FormControl 
                 fullWidth
+                className={`${styles.formControl.root} ${styles.formControl.inputHover} ${styles.formControl.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -242,7 +246,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                     </div>
                   </MenuItem>
                 </Select>
-              </StyledFormControl>
+              </FormControl>
             </div>
           </Grid>
 
@@ -256,7 +260,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledTextField
+              <TextField
                 fullWidth
                 multiline
                 rows={4}
@@ -265,6 +269,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 onChange={(e) => onInputChange('description', e.target.value)}
                 error={!!errors.description}
                 helperText={errors.description}
+                className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -296,7 +301,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledTextField
+              <TextField
                 fullWidth
                 multiline
                 rows={3}
@@ -305,6 +310,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
                 onChange={(e) => onInputChange('deliverables', e.target.value)}
                 error={!!errors.deliverables}
                 helperText={errors.deliverables}
+                className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',

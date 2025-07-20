@@ -4,10 +4,12 @@ import {
   Grid,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  TextField,
+  FormControl
 } from '@mui/material';
 import { DollarSign, Clock, Calendar, AlertTriangle } from 'lucide-react';
-import { SectionCard, StyledTextField, StyledFormControl } from '../styles';
+import { styles } from '../styles';
 import { FormSectionProps } from '../types';
 
 const BudgetTimeSection: React.FC<FormSectionProps> = ({
@@ -48,7 +50,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledTextField
+              <TextField
                 fullWidth
                 type="number"
                 placeholder="1000"
@@ -60,6 +62,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 error={!!errors.budgetMin}
                 helperText={errors.budgetMin}
                 InputProps={{ inputProps: { min: 0 } }}
+                className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -90,7 +93,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledTextField
+              <TextField
                 fullWidth
                 type="number"
                 placeholder="5000"
@@ -102,6 +105,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 error={!!errors.budgetMax}
                 helperText={errors.budgetMax}
                 InputProps={{ inputProps: { min: 0 } }}
+                className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -131,8 +135,9 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                   支付类型
                 </Typography>
               </div>
-              <StyledFormControl 
+              <FormControl 
                 fullWidth
+                className={`${styles.formControl.root} ${styles.formControl.inputHover} ${styles.formControl.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -166,7 +171,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                   <MenuItem value="hourly">按小时计费</MenuItem>
                   <MenuItem value="milestone">里程碑付款</MenuItem>
                 </Select>
-              </StyledFormControl>
+              </FormControl>
             </div>
           </Grid>
 
@@ -180,7 +185,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 </Typography>
                 <span className="text-red-500 text-sm">*</span>
               </div>
-              <StyledTextField
+              <TextField
                 fullWidth
                 type="date"
                 value={formData.deadline}
@@ -189,6 +194,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                 helperText={errors.deadline}
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ min: new Date().toISOString().split('T')[0] }}
+                className={`${styles.textField.root} ${styles.textField.inputHover} ${styles.textField.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -219,8 +225,9 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                   优先级
                 </Typography>
               </div>
-              <StyledFormControl 
+              <FormControl 
                 fullWidth
+                className={`${styles.formControl.root} ${styles.formControl.inputHover} ${styles.formControl.inputFocused}`}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -255,7 +262,7 @@ const BudgetTimeSection: React.FC<FormSectionProps> = ({
                   <MenuItem value="high">高优先级</MenuItem>
                   <MenuItem value="urgent">紧急</MenuItem>
                 </Select>
-              </StyledFormControl>
+              </FormControl>
             </div>
           </Grid>
         </Grid>
