@@ -24,6 +24,9 @@ const JobForm = loadable(/* #__LOADABLE__ */ () => import("@pages/Jobs/CreatePag
 // Emotion缓存测试页面
 const EmotionCacheTest = loadable(/* #__LOADABLE__ */ () => import("@pages/EmotionCacheTestPage/EmotionCacheTestPage"), null);
 
+// Wallet 页面
+const Wallet = loadable(/* #__LOADABLE__ */ () => import("@pages/Wallet/WalletDashboard"), null);
+
 // 404页面
 const NotFound = () => (
   <div style={{ textAlign: "center", padding: "2rem" }}>
@@ -36,16 +39,17 @@ const NotFound = () => (
 );
 
 import { menuCategories } from "../config/navigation";
+import StackDemo from "@/pages/Wallet/StackDemo";
 // 静态导入所有组件
 const NativeEthereum = loadable(
-  () => import("@pages/Wallets/native-ethereum/page"),
+  () => import("@/pages/WalletConnect/native-ethereum/page"),
   null
 );
 const NativeEthereumJs = loadable(
-  () => import("@/pages/Wallets/native-ethereum-js/page"),
+  () => import("@/pages/WalletConnect/native-ethereum-js/page"),
   null
 );
-const EthersJs = loadable(() => import("@pages/Wallets/ethers-js/page"), null);
+const EthersJs = loadable(() => import("@/pages/WalletConnect/ethers-js/page"), null);
 // ... 其他组件
 
 // 创建路径到组件的映射
@@ -151,6 +155,17 @@ const routes: PreFetchRouteObject[] = [
             },
           },
         ],
+      },
+
+      // Wallet 页面
+      {
+        path: "wallet",
+        element: <Wallet />,
+      },
+       // 合约测试页面
+      {
+        path: "stackdemo",
+        element: <StackDemo />,
       },
 
       // 其他页面

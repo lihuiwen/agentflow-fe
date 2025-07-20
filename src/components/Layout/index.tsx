@@ -79,13 +79,25 @@ const Layout: React.FC = () => {
               </Link>
             </li>
             <li>
+              <Link
+                to="/Wallet"
+                className={`text-decoration-none font-medium transition-colors duration-200 hover:text-blue-400 ${
+                  isActive("/jobs")
+                    ? "text-blue-400 font-semibold"
+                    : "text-gray-300"
+                }`}
+              >
+                Wallet
+              </Link>
+            </li>
+            <li>
               <Wallets />
             </li>
           </ul>
         </nav>
       </header>
 
-      <main className="p-4" style={{ 
+      <main style={{ 
         minHeight: 'calc(100vh - 140px)', 
       }}>
         <Outlet />

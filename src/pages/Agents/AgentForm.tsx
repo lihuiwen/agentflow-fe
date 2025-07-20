@@ -22,6 +22,7 @@ import { Info, HelpCircle, Plus, ExternalLink, RefreshCw, Send, X } from 'lucide
 
 import { FormData, FormErrors, PaginationCategoryParams, CategoryData, CategoryDataRes } from '@apis/model/Agents';
 import { useNavigate } from 'react-router-dom';
+import { injected, useAccount, useConnect } from 'wagmi';
 
 function AgentForm() {
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,8 @@ function AgentForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [currentTag, setCurrentTag] = useState<string>('');
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+  const { connect } = useConnect();
+  const { address, isConnected } = useAccount();
 
   const navigate = useNavigate();
 
@@ -121,6 +124,13 @@ function AgentForm() {
       setLoading(true);
       if(formData.price) {
         formData.price = parseFloat(formData.price.toString());
+      }
+      // 判断钱包是否链接
+      if(isConnected) {
+        formData.walletAddress = address as `0x${string}`;
+      } else {
+        connect({ connector: injected() })
+        return;
       }
       const response = await fetch('http://localhost:8088/agents', {
         method: 'POST',
