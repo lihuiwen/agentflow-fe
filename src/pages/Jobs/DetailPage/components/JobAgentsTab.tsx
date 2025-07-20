@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   Card,
@@ -9,9 +9,11 @@ import {
   LinearProgress,
   Chip,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material';
 import { Agent } from '@apis/model/Agents';
+import AgentExecutionDialog from '@/pages/Jobs/DetailPage/components/AgentExecutionDialog';
 
 interface JobAgentsTabProps {
   agents: Agent[];
@@ -22,6 +24,23 @@ const JobAgentsTab: React.FC<JobAgentsTabProps> = ({
   agents,
   agentsLoading
 }) => {
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleViewExecution = (agent: Agent) => {
+    setSelectedAgent(agent);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedAgent(null);
+  };
+
+  const handleConfirm = () => {
+    setDialogOpen(false);
+    setSelectedAgent(null);
+  };
   if (agentsLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -98,11 +117,38 @@ const JobAgentsTab: React.FC<JobAgentsTabProps> = ({
                     ))}
                   </Box>
                 )}
+                
+                <Box mt={2} display="flex" justifyContent="flex-end">
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleViewExecution(agent)}
+                    sx={{
+                      borderColor: 'primary.main',
+                      color: 'primary.main',
+                      '&:hover': {
+                        borderColor: 'primary.dark',
+                        backgroundColor: 'primary.50'
+                      }
+                    }}
+                  >
+                    查看执行结果
+                  </Button>
+                </Box>
               </Card>
             </Grid>
           ))
         )}
       </Grid>
+      
+      {selectedAgent && (
+        <AgentExecutionDialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          onConfirm={handleConfirm}
+          agent={selectedAgent}
+        />
+      )}
     </>
   );
 };

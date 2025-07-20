@@ -15,7 +15,7 @@ import JobService from '@apis/services/Job';
 import CategoryService from '@apis/services/Category';
 import { PrefetchKeys } from '@apis/queryKeys';
 import { CreateJobRequest } from '@apis/model/Job';
-import { FormContainer, FormCard, SaveButton, CancelButton } from './styles';
+import { styles } from './styles';
 import { FormData } from './types';
 import BasicInfoSection from './components/BasicInfoSection';
 import BudgetTimeSection from './components/BudgetTimeSection';
@@ -135,6 +135,8 @@ const JobForm: React.FC = () => {
     
     const submitData: CreateJobRequest = {
       ...formData,
+      minBudget: formData.budget.min,
+      maxBudget: formData.budget.max,
       walletAddress: '0x1234567890abcdef' // 实际项目中从钱包获取
     };
     
@@ -162,13 +164,13 @@ const JobForm: React.FC = () => {
 
   if (isEditing && jobLoading) {
     return (
-      <FormContainer>
+      <Box className={styles.formContainer}>
         <Container maxWidth="lg" sx={{ py: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
             <CircularProgress size={60} />
           </Box>
         </Container>
-      </FormContainer>
+      </Box>
     );
   }
 
@@ -176,7 +178,7 @@ const JobForm: React.FC = () => {
   const submitError = createMutation.error || updateMutation.error;
 
   return (
-    <FormContainer>
+    <Box className={styles.formContainer}>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* 标题区域 */}
         <Box sx={{ mb: 4 }}>
@@ -213,7 +215,7 @@ const JobForm: React.FC = () => {
         </Box>
 
         <form onSubmit={handleSubmit}>
-          <FormCard>
+          <Box className={styles.formCard}>
             <CardContent sx={{ p: 4 }}>
               {submitError && (
                 <Alert severity="error" sx={{ mb: 3 }}>
@@ -256,26 +258,28 @@ const JobForm: React.FC = () => {
 
               {/* 提交按钮 */}
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 4 }}>
-                <CancelButton
+                <Button
                   type="button"
                   onClick={handleCancel}
                   disabled={isSubmitting}
+                  className={styles.cancelButton}
                 >
                   取消
-                </CancelButton>
-                <SaveButton
+                </Button>
+                <Button
                   type="submit"
                   disabled={isSubmitting}
                   startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <Save size={20} />}
+                  className={styles.saveButton}
                 >
                   {isSubmitting ? '保存中...' : isEditing ? '更新 Job' : '创建 Job'}
-                </SaveButton>
+                </Button>
               </Box>
             </CardContent>
-          </FormCard>
+          </Box>
         </form>
       </Container>
-    </FormContainer>
+    </Box>
   );
 };
 

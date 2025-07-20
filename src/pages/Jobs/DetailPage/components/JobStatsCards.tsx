@@ -30,7 +30,7 @@ const JobStatsCards: React.FC<JobStatsCardsProps> = ({
     },
     {
       title: '分配Agent',
-      value: agentsLoading ? null : agentsCount.toString(),
+      value: agentsLoading ? null : 30,
       icon: User,
       color: {
         primary: '#3b82f6',
