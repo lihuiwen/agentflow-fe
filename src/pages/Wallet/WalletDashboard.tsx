@@ -9,20 +9,8 @@ import {
 } from 'lucide-react';
 import { useAccount, useReadContract, useBalance, useConnect, useSimulateContract } from 'wagmi';
 import { formatUnits } from 'viem';
-import DataChainLog from '@/abis/USDTStaking.json';
+import { CONTRACTS, STAKING_CONTRACT_ABI, formatUSDT } from './contractHelpers';
 
-
-// 合约地址（sepolia 测试链）
-// const CONTRACT_ADDRESS = DataChainLog.networks['11155111'].address;
-const STAKING_CONTRACT_ABI = DataChainLog.abi;
-
-// 合约地址配置
-const CONTRACTS = {
-  sepolia: {
-    staking: '0xB51d6daA8c137F60780d413837BBab667C48032d', // 替换为你的质押合约地址
-    usdt: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0', // Sepolia USDT地址
-  },
-};
 const STAKING_CONTRACT_ADDRESS = CONTRACTS.sepolia.staking as `0x${string}`;
 const STACK_USDT_ADDRESS = CONTRACTS.sepolia.usdt as `0x${string}`;
 
@@ -62,11 +50,7 @@ const WalletDashboard = () => {
 
   const { data: totalStaked, isLoading: totalLoading } = totalStakedResult;
 
-  // 格式化USDT余额 (6位小数)
-  const formatUSDT = (value: bigint | undefined) => {
-    if (!value) return '0.00';
-    return parseFloat(formatUnits(value, 6)).toFixed(2);
-  };
+  // 使用统一的格式化函数
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600">
