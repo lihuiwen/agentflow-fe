@@ -16,6 +16,7 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
   const { address, isConnected } = useAccount();
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
 
   const stakingContractAddress = CONTRACTS.sepolia.staking as `0x${string}`;
 
@@ -52,18 +53,19 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
   // 手动控制确认状态，避免在没有交易哈希时显示加载中
   const isWithdrawConfirming = withdrawHash && isWithdrawConfirmingRaw;
 
-  // 处理提取成功
+  // 处理转账成功
   useEffect(() => {
     if (isWithdrawSuccess && withdrawHash) {
       setIsWithdrawing(false);
       setWithdrawAmount('');
-      console.log('提取成功！');
+      setRecipientAddress('');
+      console.log('转账成功！');
     }
   }, [isWithdrawSuccess, withdrawHash]);
 
-  // 执行部分提取 - 修改为不依赖模拟结果
+  // 执行转账操作
   const handleWithdraw = () => {
-    if (!address) return;
+    if (!address || !recipientAddress) return;
 
     setIsWithdrawing(true);
     try {
@@ -71,25 +73,28 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
         address: stakingContractAddress,
         abi: STAKING_CONTRACT_ABI,
         functionName: 'transferBalance',
-        args: [address, withdrawAmountBigInt],
+        args: [recipientAddress as `0x${string}`, withdrawAmountBigInt],
         chain: undefined,
         account: address,
       });
     } catch (error) {
       setIsWithdrawing(false);
-      console.error('提取失败:', error);
+      console.error('转账失败:', error);
     }
   };
 
-  // 使用统一的格式化函数
+  // 地址验证函数
+  const isValidAddress = (addr: string): boolean => {
+    return /^0x[a-fA-F0-9]{40}$/.test(addr);
+  };
 
   return (
     <div className={`p-6 border rounded-lg bg-white shadow-sm ${className || ''}`}>
       {/* 提取界面 */}
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">提取操作</h3>
-        <div className="text-2xl font-bold text-green-600 mb-1">手动提取模式</div>
-        <p className="text-sm text-gray-600">请手动输入要提取的金额</p>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">转账操作</h3>
+        <div className="text-2xl font-bold text-green-600 mb-1">质押余额转账</div>
+        <p className="text-sm text-gray-600">将质押余额转账到指定地址</p>
       </div>
 
       {/* USDT余额检查区域 */}
@@ -164,6 +169,33 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
             </div>
           </div>
 
+          {/* 接收地址输入 */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">接收地址</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={recipientAddress}
+                onChange={(e) => setRecipientAddress(e.target.value)}
+                placeholder="输入接收地址 (0x...)"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  recipientAddress && !isValidAddress(recipientAddress) 
+                    ? 'border-red-300 bg-red-50' 
+                    : 'border-gray-300'
+                }`}
+              />
+              <button
+                onClick={() => setRecipientAddress(address || '')}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                自己
+              </button>
+            </div>
+            {recipientAddress && !isValidAddress(recipientAddress) && (
+              <p className="mt-1 text-sm text-red-600">请输入有效的以太坊地址</p>
+            )}
+          </div>
+
           {/* 错误提示 */}
           {withdrawError && (
             <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
@@ -179,6 +211,8 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
               disabled={
                 !withdrawAmount ||
                 parseFloat(withdrawAmount) <= 0 ||
+                !recipientAddress ||
+                !isValidAddress(recipientAddress) ||
                 (stakedBalance && parseUnits(withdrawAmount, 6) > (stakedBalance as bigint)) ||
                 isWithdrawing ||
                 isWithdrawConfirming
@@ -207,10 +241,10 @@ const WithdrawActions: React.FC<WithdrawActionsProps> = ({ className }) => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  {isWithdrawConfirming ? '确认中...' : '提取中...'}
+                  {isWithdrawConfirming ? '确认中...' : '转账中...'}
                 </span>
               ) : (
-                `提取 ${withdrawAmount || '0'} USDT`
+                `转账 ${withdrawAmount || '0'} USDT`
               )}
             </button>
           </div>
