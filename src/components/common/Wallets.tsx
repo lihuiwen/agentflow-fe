@@ -21,7 +21,9 @@ export default function Wallets() {
   const updateAddress = useUserStore((state) => state.updateAddress);
   // 页面加载是自动触发链接按钮
   useEffect(() => {
-    connect({ connector: injected() })
+    console.log(isLinking)
+    if(!isLinking)
+      connect({ connector: injected() })
   }, []);
   // 监听获取余额是否出错
   useEffect(() => {

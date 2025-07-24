@@ -40,6 +40,7 @@ const NotFound = () => (
 
 import { menuCategories } from "../config/navigation";
 import StackDemo from "@/pages/Wallet/StackDemo";
+import StackDemo2 from "@/pages/Wallet/StackDemo2";
 // 静态导入所有组件
 const NativeEthereum = loadable(
   () => import("@/pages/WalletConnect/native-ethereum/page"),
@@ -162,10 +163,15 @@ const routes: PreFetchRouteObject[] = [
         path: "wallet",
         element: <Wallet />,
       },
-       // 合约测试页面
+       // 合约测试页面1
       {
         path: "stackdemo",
         element: <StackDemo />,
+      },
+       // 合约测试页面2
+      {
+        path: "stackdemo2",
+        element: <StackDemo2 />,
       },
 
       // 其他页面

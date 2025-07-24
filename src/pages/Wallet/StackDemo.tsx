@@ -2,72 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useAccount, useWriteContract, useSimulateContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
 import { sepolia } from 'wagmi/chains';
-
-// 合约ABI
-const STAKING_CONTRACT_ABI = [
-  {
-    "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
-    "name": "stakeUSDT",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdrawAll",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-] as const;
-
-const USDT_ABI = [
-  {
-    "inputs": [
-      {"internalType": "address", "name": "spender", "type": "address"},
-      {"internalType": "uint256", "name": "amount", "type": "uint256"}
-    ],
-    "name": "approve",
-    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{"internalType": "address", "name": "account", "type": "address"}],
-    "name": "balanceOf",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {"internalType": "address", "name": "owner", "type": "address"},
-      {"internalType": "address", "name": "spender", "type": "address"}
-    ],
-    "name": "allowance",
-    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  }
-] as const;
+import { CONTRACTS, STAKING_CONTRACT_ABI, USDT_ABI, formatUSDT } from './contractHelpers';
 
 interface StakingActionsProps {
   className?: string;
 }
-
-const CONTRACTS = {
-  sepolia: {
-    staking: '0xB51d6daA8c137F60780d413837BBab667C48032d' as `0x${string}`, // 替换为你的质押合约地址
-    usdt: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0' as `0x${string}`, // Sepolia USDT地址
-  },
-};
 
 const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
   const { address, isConnected, chain } = useAccount();
@@ -83,9 +22,9 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
 
   // 获取用户USDT余额
   const { data: usdtBalance } = useReadContract({
-    address: usdtContractAddress,
-    abi: USDT_ABI,
-    functionName: 'balanceOf',
+    address: stakingContractAddress,
+    abi: STAKING_CONTRACT_ABI,
+    functionName: 'getUserUSDTBalance',
     args: address ? [address] : undefined,
     query: {
       enabled: !!address && isConnected,
@@ -95,24 +34,24 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
 
   // 获取授权额度
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: usdtContractAddress,
-    abi: USDT_ABI,
-    functionName: 'allowance',
-    args: address ? [address, stakingContractAddress] : undefined,
+    address: stakingContractAddress,
+    abi: STAKING_CONTRACT_ABI,
+    functionName: 'getUserUSDTAllowance',
+    args: address ? [address] : undefined,
     query: {
       enabled: !!address && isConnected,
       refetchInterval: 5000,
     }
   });
 
-  // 模拟授权交易
+  // 模拟授权交易 - 使用USDT合约的approve方法
   const { data: approveSimulation } = useSimulateContract({
     address: usdtContractAddress,
     abi: USDT_ABI,
     functionName: 'approve',
     args: [stakingContractAddress, STAKE_AMOUNT],
     query: {
-      enabled: !!address && isConnected && (allowance || BigInt(0)) < STAKE_AMOUNT,
+      enabled: !!address && isConnected && (allowance as bigint || BigInt(0)) < STAKE_AMOUNT,
     }
   });
 
@@ -123,7 +62,7 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
     functionName: 'stakeUSDT',
     args: [STAKE_AMOUNT],
     query: {
-      enabled: !!address && isConnected && (allowance || BigInt(0)) >= STAKE_AMOUNT,
+      enabled: !!address && isConnected && (allowance as bigint || BigInt(0)) >= STAKE_AMOUNT,
     }
   });
 
@@ -195,14 +134,7 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
     
     setIsStaking(true);
     try {
-      writeStake({
-        address: stakingContractAddress,
-        abi: STAKING_CONTRACT_ABI,
-        functionName: 'stakeUSDT',
-        args: [STAKE_AMOUNT],
-        chain: undefined,
-        account: address,
-      });
+      writeStake(stakeSimulation.request);
     } catch (error) {
       setIsStaking(false);
       console.error('质押失败:', error);
@@ -210,31 +142,8 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
   };
 
   // 检查条件
-  const hasEnoughBalance = usdtBalance && usdtBalance >= STAKE_AMOUNT;
-  const hasEnoughAllowance = allowance && allowance >= STAKE_AMOUNT;
-  const isWrongNetwork = chain?.id !== sepolia.id;
-
-  // 格式化USDT余额
-  const formatUSDT = (value: bigint | undefined) => {
-    if (!value) return '0.00';
-    return parseFloat(formatUnits(value, 6)).toFixed(2);
-  };
-
-  if (!isConnected) {
-    return (
-      <div className={`p-4 border rounded-lg bg-gray-50 ${className || ''}`}>
-        <p className="text-gray-600 text-center">请先连接钱包</p>
-      </div>
-    );
-  }
-
-  if (isWrongNetwork) {
-    return (
-      <div className={`p-4 border rounded-lg bg-yellow-50 border-yellow-200 ${className || ''}`}>
-        <p className="text-yellow-800 text-center">请切换到Sepolia测试网</p>
-      </div>
-    );
-  }
+  const hasEnoughBalance = usdtBalance && (usdtBalance as bigint) >= STAKE_AMOUNT;
+  const hasEnoughAllowance = allowance && (allowance as bigint) >= STAKE_AMOUNT;
 
   return (
     <div className={`p-6 border rounded-lg bg-white shadow-sm ${className || ''}`}>
@@ -251,7 +160,7 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-600">您的USDT余额:</span>
           <span className={`font-semibold ${hasEnoughBalance ? 'text-green-600' : 'text-red-600'}`}>
-            {formatUSDT(usdtBalance)} USDT
+            {formatUSDT(usdtBalance as bigint)} USDT
           </span>
         </div>
         
@@ -259,7 +168,7 @@ const StakingActions: React.FC<StakingActionsProps> = ({ className }) => {
           <div className="flex justify-between items-center text-sm mt-1">
             <span className="text-gray-600">已授权额度:</span>
             <span className={`font-semibold ${hasEnoughAllowance ? 'text-green-600' : 'text-orange-600'}`}>
-              {formatUSDT(allowance)} USDT
+              {formatUSDT(allowance as bigint)} USDT
             </span>
           </div>
         )}
